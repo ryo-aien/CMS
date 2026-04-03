@@ -34,28 +34,6 @@ export default async function HomePage() {
 
         {/* Pink glow */}
         <div className="absolute inset-0 bg-pink-glow pointer-events-none" />
-
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 w-full">
-          <div className="animate-slide-up">
-            <p className="section-title">Welcome to</p>
-            <h1 className="text-4xl sm:text-6xl md:text-7xl font-display font-bold text-white leading-tight drop-shadow-lg">
-              {shop?.shop_name ?? 'CONCAFE'}
-            </h1>
-            <p className="mt-4 text-text-secondary text-sm sm:text-base max-w-md">
-              {shop?.business_hours && (
-                <span>営業時間: {shop.business_hours}</span>
-              )}
-            </p>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <Link href="/cast" className="btn-primary">
-                CAST を見る
-              </Link>
-              <Link href="/schedule" className="btn-outline">
-                出勤スケジュール
-              </Link>
-            </div>
-          </div>
-        </div>
       </section>
 
       {/* Today's Cast */}

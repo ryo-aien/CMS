@@ -107,7 +107,7 @@ export default function AdminDashboard() {
       <h1 className="text-xl font-bold text-gray-800 mb-6">ダッシュボード</h1>
 
       {/* Summary cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {cards.map((card) => (
           <Link
             key={card.key}
@@ -126,31 +126,6 @@ export default function AdminDashboard() {
             <p className="text-sm text-gray-500 mt-1">{card.label}</p>
           </Link>
         ))}
-      </div>
-
-      {/* Quick links */}
-      <div className="bg-white rounded-xl border border-gray-100 p-6">
-        <h2 className="text-sm font-semibold text-gray-700 mb-4">クイックリンク</h2>
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-          {[
-            { href: '/admin/cast/new', label: '新規キャスト追加' },
-            { href: '/admin/news/new', label: '新規ニュース作成' },
-            { href: '/admin/schedule', label: 'シフト管理' },
-            { href: '/admin/gallery', label: 'ギャラリー管理' },
-            { href: '/admin/shop', label: '店舗情報編集' },
-          ].map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className="flex items-center gap-2 px-4 py-3 rounded-lg border border-gray-100 text-sm text-gray-600 hover:border-pink-200 hover:text-pink-600 hover:bg-pink-50 transition-all"
-            >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-              </svg>
-              {link.label}
-            </Link>
-          ))}
-        </div>
       </div>
     </div>
   );
