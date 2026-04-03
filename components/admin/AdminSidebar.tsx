@@ -104,7 +104,7 @@ export default function AdminSidebar({ onClose }: Props) {
   }, []);
 
   const navItems = allNavItems.filter(
-    (item) => !('ownerOnly' in item && item.ownerOnly) || role === 'owner'
+    (item) => !('ownerOnly' in item && item.ownerOnly) || role === null || role === 'owner'
   );
 
   const isActive = (href: string) => {
