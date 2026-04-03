@@ -1,8 +1,7 @@
 import type { Metadata } from 'next';
 import { Noto_Sans_JP, Playfair_Display } from 'next/font/google';
 import './globals.css';
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
+import PublicLayout from '@/components/PublicLayout';
 
 const notoSansJP = Noto_Sans_JP({
   weight: ['300', '400', '500', '700'],
@@ -40,9 +39,7 @@ export default function RootLayout({
   return (
     <html lang="ja" className={`${notoSansJP.variable} ${playfairDisplay.variable}`}>
       <body className="bg-background text-text-primary font-sans antialiased">
-        <Header />
-        <main className="pt-16 min-h-screen">{children}</main>
-        <Footer />
+        <PublicLayout>{children}</PublicLayout>
       </body>
     </html>
   );
