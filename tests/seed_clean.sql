@@ -5,34 +5,41 @@
 
 delete from schedule_casts
   where schedule_id in (
-    select id from schedules
-    where id like '22222222-0000-0000-0000-%'
+    '22222222-0000-0000-0000-000000000001',
+    '22222222-0000-0000-0000-000000000002',
+    '22222222-0000-0000-0000-000000000003',
+    '22222222-0000-0000-0000-000000000004'
   );
 
 delete from schedules
-  where id like '22222222-0000-0000-0000-%';
+  where id in (
+    '22222222-0000-0000-0000-000000000001',
+    '22222222-0000-0000-0000-000000000002',
+    '22222222-0000-0000-0000-000000000003',
+    '22222222-0000-0000-0000-000000000004'
+  );
 
 delete from casts
-  where id like '11111111-0000-0000-0000-%';
+  where id in (
+    '11111111-0000-0000-0000-000000000001',
+    '11111111-0000-0000-0000-000000000002',
+    '11111111-0000-0000-0000-000000000003'
+  );
 
 delete from news
-  where id like '33333333-0000-0000-0000-%';
+  where id in (
+    '33333333-0000-0000-0000-000000000001',
+    '33333333-0000-0000-0000-000000000002',
+    '33333333-0000-0000-0000-000000000003'
+  );
 
 delete from gallery
-  where id like '44444444-0000-0000-0000-%';
+  where id in (
+    '44444444-0000-0000-0000-000000000001',
+    '44444444-0000-0000-0000-000000000002',
+    '44444444-0000-0000-0000-000000000003',
+    '44444444-0000-0000-0000-000000000004'
+  );
 
--- 店舗情報をリセット
-update shop set
-  shop_name        = null,
-  business_hours   = null,
-  closed_days      = null,
-  address          = null,
-  google_map_embed_url = null,
-  top_banner_url   = null,
-  line_url         = null,
-  form_url         = null,
-  apply_type       = 'both',
-  system_text      = null,
-  access_text      = null,
-  recruit_text     = null
-where id = 1;
+-- 店舗情報を削除
+delete from shop where id = 1;

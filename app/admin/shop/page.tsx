@@ -20,6 +20,7 @@ export default function AdminShopPage() {
     address: '',
     google_map_embed_url: '',
     top_banner_url: '',
+    menu_image_url: '',
     line_url: '',
     form_url: '',
     apply_type: 'both' as 'line' | 'form' | 'both',
@@ -43,6 +44,7 @@ export default function AdminShopPage() {
             address: shop.address ?? '',
             google_map_embed_url: shop.google_map_embed_url ?? '',
             top_banner_url: shop.top_banner_url ?? '',
+            menu_image_url: shop.menu_image_url ?? '',
             line_url: shop.line_url ?? '',
             form_url: shop.form_url ?? '',
             apply_type: shop.apply_type ?? 'both',
@@ -75,6 +77,7 @@ export default function AdminShopPage() {
         address: form.address || null,
         google_map_embed_url: form.google_map_embed_url || null,
         top_banner_url: form.top_banner_url || null,
+        menu_image_url: form.menu_image_url || null,
         line_url: form.line_url || null,
         form_url: form.form_url || null,
         apply_type: form.apply_type,
@@ -178,6 +181,17 @@ export default function AdminShopPage() {
             currentUrl={form.top_banner_url || null}
             onUpload={(url) => setForm((p) => ({ ...p, top_banner_url: url }))}
             label="トップバナーをアップロード"
+          />
+        </div>
+
+        {/* Menu Image */}
+        <div className="bg-white rounded-xl border border-gray-100 p-6 space-y-3">
+          <h2 className="text-sm font-semibold text-gray-700">料金・メニュー画像</h2>
+          <ImageUpload
+            bucket="gallery-images"
+            currentUrl={form.menu_image_url || null}
+            onUpload={(url) => setForm((p) => ({ ...p, menu_image_url: url }))}
+            label="メニュー画像をアップロード"
           />
         </div>
 

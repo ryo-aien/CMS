@@ -12,8 +12,8 @@ insert into casts (id, name, slug, main_image_url, sub_image_urls, message, birt
     '11111111-0000-0000-0000-000000000001',
     'さくら',
     'sakura',
-    'https://placehold.co/400x600?text=sakura',
-    '{"https://placehold.co/400x600?text=sakura-sub1","https://placehold.co/400x600?text=sakura-sub2"}',
+    'https://api.dicebear.com/9.x/lorelei/png?seed=sakura',
+    '{"https://api.dicebear.com/9.x/lorelei/png?seed=sakura2","https://api.dicebear.com/9.x/lorelei/png?seed=sakura3"}',
     'みなさんに会えるのを楽しみにしています！',
     '4月1日',
     'A',
@@ -30,7 +30,7 @@ insert into casts (id, name, slug, main_image_url, sub_image_urls, message, birt
     '11111111-0000-0000-0000-000000000002',
     'ひまり',
     'himari',
-    'https://placehold.co/400x600?text=himari',
+    'https://api.dicebear.com/9.x/lorelei/png?seed=himari',
     '{}',
     'いつも笑顔でお出迎えします♪',
     '7月7日',
@@ -91,7 +91,7 @@ insert into news (id, title, slug, category, thumbnail_url, content, published_a
     'グランドオープンのお知らせ',
     'grand-open',
     'お知らせ',
-    'https://placehold.co/800x400?text=news1',
+    'https://api.dicebear.com/9.x/lorelei/png?seed=news1',
     '<p>いよいよグランドオープンです！皆様のご来店をお待ちしております。</p>',
     current_date - 30,
     true
@@ -101,7 +101,7 @@ insert into news (id, title, slug, category, thumbnail_url, content, published_a
     '新キャスト加入のご案内',
     'new-cast',
     'キャスト',
-    'https://placehold.co/800x400?text=news2',
+    'https://api.dicebear.com/9.x/lorelei/png?seed=news2',
     '<p>新しいキャストが加入しました！ぜひ会いに来てください。</p>',
     current_date - 7,
     true
@@ -121,25 +121,27 @@ insert into news (id, title, slug, category, thumbnail_url, content, published_a
 -- ギャラリー
 -- =============================================
 insert into gallery (id, image_url, caption, category, is_public, sort_order) values
-  ('44444444-0000-0000-0000-000000000001', 'https://placehold.co/600x600?text=gallery1', '店内の様子', '店内', true, 1),
-  ('44444444-0000-0000-0000-000000000002', 'https://placehold.co/600x600?text=gallery2', 'ドリンクメニュー', 'メニュー', true, 2),
-  ('44444444-0000-0000-0000-000000000003', 'https://placehold.co/600x600?text=gallery3', 'イベントの様子', 'イベント', true, 3),
-  ('44444444-0000-0000-0000-000000000004', 'https://placehold.co/600x600?text=gallery4', '非公開画像', '店内', false, 4);
+  ('44444444-0000-0000-0000-000000000001', 'https://api.dicebear.com/9.x/lorelei/png?seed=gallery1', '店内の様子', '店内', true, 1),
+  ('44444444-0000-0000-0000-000000000002', 'https://api.dicebear.com/9.x/lorelei/png?seed=gallery2', 'ドリンクメニュー', 'メニュー', true, 2),
+  ('44444444-0000-0000-0000-000000000003', 'https://api.dicebear.com/9.x/lorelei/png?seed=gallery3', 'イベントの様子', 'イベント', true, 3),
+  ('44444444-0000-0000-0000-000000000004', 'https://api.dicebear.com/9.x/lorelei/png?seed=gallery4', '非公開画像', '店内', false, 4);
 
 -- =============================================
 -- 店舗情報
 -- =============================================
-update shop set
-  shop_name        = 'テストコンカフェ',
-  business_hours   = '12:00〜22:00（最終入店 21:30）',
-  closed_days      = '毎週火曜日',
-  address          = '東京都千代田区テスト1-2-3 テストビル3F',
-  google_map_embed_url = 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3240.828030650526!2d139.7671248!3d35.6812362!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x60188bfbd89f700b%3A0x277c49ba34ed38!2z5p2x5Lqs6aeF!5e0!3m2!1sja!2sjp!4v1234567890',
-  top_banner_url   = 'https://placehold.co/1200x400?text=banner',
-  line_url         = 'https://line.me/test',
-  form_url         = 'https://forms.example.com/test',
-  apply_type       = 'both',
-  system_text      = '## システム説明\n\n当店のシステムについてご説明します。\n\n- 入店料：1,000円（90分制）\n- ドリンク：500円〜\n- 延長：30分500円',
-  access_text      = '## アクセス\n\nテスト駅から徒歩3分。テストビル3Fです。',
-  recruit_text     = '## 採用情報\n\n一緒に働くキャストを募集中です！未経験者歓迎。'
-where id = 1;
+insert into shop (id, shop_name, business_hours, closed_days, address, google_map_embed_url, top_banner_url, menu_image_url, line_url, form_url, apply_type, system_text, access_text, recruit_text) values (
+  1,
+  'テストコンカフェ',
+  '12:00〜22:00（最終入店 21:30）',
+  '毎週火曜日',
+  '東京都千代田区テスト1-2-3 テストビル3F',
+  'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3240.828030650526!2d139.7671248!3d35.6812362!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x60188bfbd89f700b%3A0x277c49ba34ed38!2z5p2x5Lqs6aeF!5e0!3m2!1sja!2sjp!4v1234567890',
+  'https://api.dicebear.com/9.x/lorelei/png?seed=banner&size=1200',
+  null,
+  'https://line.me/test',
+  'https://forms.example.com/test',
+  'both',
+  '## システム説明\n\n当店のシステムについてご説明します。\n\n- 入店料：1,000円（90分制）\n- ドリンク：500円〜\n- 延長：30分500円',
+  '## アクセス\n\nテスト駅から徒歩3分。テストビル3Fです。',
+  '## 採用情報\n\n一緒に働くキャストを募集中です！未経験者歓迎。'
+);

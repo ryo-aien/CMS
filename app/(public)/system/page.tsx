@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Image from 'next/image';
 import { getShop } from '@/lib/data';
 
 export const metadata: Metadata = {
@@ -20,15 +21,30 @@ export default async function SystemPage() {
         <div className="mt-4 mx-auto w-12 h-0.5 bg-accent" />
       </div>
 
+      {shop?.menu_image_url && (
+        <div className="mb-10">
+          <Image
+            src={shop.menu_image_url}
+            alt="料金・メニュー"
+            width={900}
+            height={600}
+            className="w-full h-auto rounded-lg"
+            priority
+          />
+        </div>
+      )}
+
       {shop?.system_text ? (
         <div
           className="richtext"
           dangerouslySetInnerHTML={{ __html: shop.system_text }}
         />
       ) : (
-        <div className="text-center py-20 text-text-muted">
-          <p>現在準備中です。</p>
-        </div>
+        !shop?.menu_image_url && (
+          <div className="text-center py-20 text-text-muted">
+            <p>現在準備中です。</p>
+          </div>
+        )
       )}
     </div>
   );

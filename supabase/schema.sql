@@ -78,6 +78,7 @@ create table shop (
   line_url text,
   form_url text,
   apply_type text default 'both',
+  menu_image_url text,
   system_text text,
   access_text text,
   recruit_text text,
@@ -96,5 +97,4 @@ create table profiles (
 -- マスターデータ
 -- =============================================
 
--- 店舗情報の初期レコード（常に id=1 の1行のみ）
-insert into shop (id) values (1);
+-- 店舗情報の初期レコードは seed.sql で投入する

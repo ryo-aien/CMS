@@ -74,6 +74,7 @@ export type Shop = {
   address: string | null;
   google_map_embed_url: string | null;
   top_banner_url: string | null;
+  menu_image_url: string | null;
   line_url: string | null;
   form_url: string | null;
   apply_type: 'line' | 'form' | 'both';
