@@ -25,14 +25,6 @@ export default function CastCard({ cast }: Props) {
       {/* Gradient overlay */}
       <div className="absolute inset-0 bg-card-gradient" />
 
-      {/* Status badge */}
-      {cast.status && (
-        <div className="absolute top-3 left-3">
-          <span className="inline-block px-2 py-0.5 text-[10px] tracking-widest font-medium bg-accent text-white rounded-full">
-            {cast.status}
-          </span>
-        </div>
-      )}
 
       {/* Name */}
       <div className="absolute bottom-0 left-0 right-0 p-4">

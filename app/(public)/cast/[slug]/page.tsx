@@ -64,13 +64,6 @@ export default async function CastDetailPage({ params }: Props) {
                 className="object-cover"
               />
             )}
-            {cast.status && (
-              <div className="absolute top-4 left-4">
-                <span className="inline-block px-3 py-1 text-xs tracking-widest font-medium bg-accent text-white rounded-full">
-                  {cast.status}
-                </span>
-              </div>
-            )}
           </div>
 
           {/* Sub Images */}
