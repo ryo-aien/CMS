@@ -102,7 +102,7 @@ export default async function CastDetailPage({ params }: Props) {
 
           {/* Message */}
           {cast.message && (
-            <div className="mb-8 p-5 rounded-xl bg-surface border border-border">
+            <div className="mb-8 p-5 rounded-xl bg-surface border border-border shadow-sm">
               <p className="text-xs tracking-widest text-accent mb-3">MESSAGE</p>
               <p className="text-text-secondary text-sm leading-relaxed">{cast.message}</p>
             </div>

@@ -25,10 +25,10 @@ export default async function RecruitPage() {
       </div>
 
       {/* Hero Banner */}
-      <div className="mb-10 p-8 sm:p-12 rounded-2xl bg-gradient-to-br from-surface via-surface-2 to-surface border border-border text-center relative overflow-hidden">
+      <div className="mb-10 p-8 sm:p-12 rounded-2xl bg-gradient-to-br from-accent/5 via-accent/10 to-accent/5 border border-accent/20 text-center relative overflow-hidden">
         <div className="absolute inset-0 bg-pink-glow pointer-events-none" />
         <p className="relative text-xs tracking-[0.3em] text-accent mb-3 font-medium">STAFF WANTED</p>
-        <h2 className="relative text-2xl sm:text-3xl font-display font-bold text-white mb-4">
+        <h2 className="relative text-2xl sm:text-3xl font-display font-bold text-text-primary mb-4">
           一緒に働きませんか？
         </h2>
         <p className="relative text-text-secondary text-sm leading-relaxed max-w-md mx-auto">
@@ -66,7 +66,7 @@ export default async function RecruitPage() {
       )}
 
       {/* Apply Buttons */}
-      <div className="mt-10 p-6 rounded-xl bg-surface border border-border text-center">
+      <div className="mt-10 p-6 rounded-xl bg-white border border-border shadow-sm text-center">
         <p className="text-xs tracking-widest text-accent mb-4 font-medium">APPLY</p>
         <h3 className="text-lg font-bold text-text-primary mb-6">応募はこちら</h3>
 

@@ -26,7 +26,7 @@ export default async function HomePage() {
             className="object-cover"
           />
         ) : (
-          <div className="absolute inset-0 bg-gradient-to-br from-surface via-background to-black" />
+          <div className="absolute inset-0 bg-gradient-to-br from-surface via-background to-surface-2" />
         )}
 
         {/* Overlay */}
@@ -38,7 +38,7 @@ export default async function HomePage() {
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 w-full">
           <div className="animate-slide-up">
             <p className="section-title">Welcome to</p>
-            <h1 className="text-4xl sm:text-6xl md:text-7xl font-display font-bold text-white leading-tight">
+            <h1 className="text-4xl sm:text-6xl md:text-7xl font-display font-bold text-white leading-tight drop-shadow-lg">
               {shop?.shop_name ?? 'CONCAFE'}
             </h1>
             <p className="mt-4 text-text-secondary text-sm sm:text-base max-w-md">
@@ -86,7 +86,7 @@ export default async function HomePage() {
 
       {/* Latest News */}
       {latestNews.length > 0 && (
-        <section className="py-16 sm:py-20 bg-surface">
+        <section className="py-16 sm:py-20 bg-surface border-y border-border">
           <div className="max-w-7xl mx-auto px-4 sm:px-6">
             <div className="mb-10">
               <p className="section-title">Latest News</p>
@@ -151,7 +151,7 @@ export default async function HomePage() {
       )}
 
       {/* SNS Section */}
-      <section className="py-16 sm:py-20 bg-surface">
+      <section className="py-16 sm:py-20 bg-surface border-t border-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 text-center">
           <p className="section-title">Follow Us</p>
           <h2 className="section-heading mb-8">SNS</h2>

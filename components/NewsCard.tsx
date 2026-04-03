@@ -20,7 +20,7 @@ export default function NewsCard({ news }: Props) {
   return (
     <Link
       href={`/news/${news.slug}`}
-      className="group flex gap-4 p-4 rounded-lg bg-surface hover:bg-surface-2 transition-colors border border-border hover:border-accent/30"
+      className="group flex gap-4 p-4 rounded-lg bg-white hover:bg-surface transition-colors border border-border hover:border-accent/40 hover:shadow-sm"
     >
       {/* Thumbnail */}
       <div className="relative flex-shrink-0 w-24 h-24 sm:w-28 sm:h-28 overflow-hidden rounded-md bg-surface-2">

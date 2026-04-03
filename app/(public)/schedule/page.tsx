@@ -64,7 +64,7 @@ export default async function SchedulePage() {
                     className={`flex flex-col items-center justify-center w-14 h-14 rounded-full ${
                       today
                         ? 'bg-accent text-white'
-                        : 'bg-surface-2 text-text-primary'
+                        : 'bg-surface-2 text-text-primary border border-border'
                     }`}
                   >
                     <span className="text-xs leading-none opacity-70">{month}月</span>

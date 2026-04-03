@@ -10,7 +10,7 @@ export default function CastCard({ cast }: Props) {
   return (
     <Link
       href={`/cast/${cast.slug}`}
-      className="group relative block aspect-[3/4] overflow-hidden rounded-lg bg-surface-2"
+      className="group relative block aspect-[3/4] overflow-hidden rounded-lg bg-surface-2 border border-border"
     >
       {cast.main_image_url && (
         <Image
