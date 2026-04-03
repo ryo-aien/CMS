@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   description: '出勤スケジュール。キャストの出勤予定をご確認いただけます。',
 };
 
-export const revalidate = 1800;
+export const revalidate = 10;
 
 function formatDateJa(dateStr: string) {
   const d = new Date(dateStr);
