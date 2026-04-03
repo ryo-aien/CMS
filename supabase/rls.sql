@@ -86,7 +86,15 @@ create policy "owner can do everything on shop"
   using ((select role from profiles where id = auth.uid()) = 'owner');
 
 create policy "owner can manage profiles"
-  on profiles for all to authenticated
+  on profiles for insert to authenticated
+  with check ((select role from profiles where id = auth.uid()) = 'owner');
+
+create policy "owner can update profiles"
+  on profiles for update to authenticated
+  using ((select role from profiles where id = auth.uid()) = 'owner');
+
+create policy "owner can delete profiles"
+  on profiles for delete to authenticated
   using ((select role from profiles where id = auth.uid()) = 'owner');
 
 -- =============================================
