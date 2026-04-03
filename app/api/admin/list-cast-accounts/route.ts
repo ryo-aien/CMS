@@ -59,7 +59,7 @@ export async function GET() {
     user_id: p.id,
     email: emailMap.get(p.id) ?? '',
     cast_id: p.cast_id,
-    cast_name: (p.casts as { name: string } | null)?.name ?? null,
+    cast_name: (p.casts as unknown as { name: string } | null)?.name ?? null,
     created_at: p.created_at,
   }));
 
