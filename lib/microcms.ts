@@ -1,8 +1,8 @@
 import { createClient } from 'microcms-js-sdk';
 import type { Cast, Schedule, News, Gallery, Shop } from '@/types';
 
-const serviceDomain = process.env.MICROCMS_SERVICE_DOMAIN ?? '';
-const apiKey = process.env.MICROCMS_API_KEY ?? '';
+const serviceDomain = process.env.MICROCMS_SERVICE_DOMAIN ?? 'placeholder';
+const apiKey = process.env.MICROCMS_API_KEY ?? 'placeholder';
 
 export const client = createClient({
   serviceDomain,
