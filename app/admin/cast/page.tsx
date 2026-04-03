@@ -33,6 +33,8 @@ export default function AdminCastPage() {
 
         if (profileData?.role === 'cast' && profileData.cast_id) {
           query = query.eq('id', profileData.cast_id);
+        } else if (profileData?.role === 'staff') {
+          // staff は全キャスト閲覧可能（フィルタなし）
         }
 
         const { data } = await query;
@@ -62,7 +64,7 @@ export default function AdminCastPage() {
     <div>
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-xl font-bold text-gray-800">キャスト管理</h1>
-        {(profile?.role === 'owner' || !profile) && (
+        {(profile?.role === 'owner' || profile?.role === 'staff' || !profile) && (
           <Link
             href="/admin/cast/new"
             className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-white"
@@ -122,12 +124,14 @@ export default function AdminCastPage() {
                     </span>
                   </td>
                   <td className="px-4 py-3 text-right space-x-2">
-                    <Link
-                      href={`/admin/cast/${cast.id}`}
-                      className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors"
-                    >
-                      編集
-                    </Link>
+                    {(profile?.role === 'owner' || profile?.role === 'staff' || cast.id === profile?.cast_id) && (
+                      <Link
+                        href={`/admin/cast/${cast.id}`}
+                        className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors"
+                      >
+                        編集
+                      </Link>
+                    )}
                     {profile?.role === 'owner' && (
                       <button
                         type="button"

@@ -2,8 +2,11 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { createClient } from '@/lib/supabase';
+import type { Role } from '@/types';
 
-const navItems = [
+const allNavItems = [
   {
     href: '/admin',
     label: 'ダッシュボード',
@@ -67,6 +70,7 @@ const navItems = [
   {
     href: '/admin/accounts',
     label: 'アカウント',
+    ownerOnly: true,
     icon: (
       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
@@ -82,6 +86,26 @@ type Props = {
 
 export default function AdminSidebar({ onClose }: Props) {
   const pathname = usePathname();
+  const [role, setRole] = useState<Role | null>(null);
+
+  useEffect(() => {
+    const supabase = createClient();
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (!user) return;
+      supabase
+        .from('profiles')
+        .select('role')
+        .eq('id', user.id)
+        .single()
+        .then(({ data }) => {
+          if (data) setRole(data.role as Role);
+        });
+    });
+  }, []);
+
+  const navItems = allNavItems.filter(
+    (item) => !('ownerOnly' in item && item.ownerOnly) || role === 'owner'
+  );
 
   const isActive = (href: string) => {
     if (href === '/admin') return pathname === '/admin';

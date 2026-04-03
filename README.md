@@ -132,16 +132,6 @@ https://<Project ID>.supabase.co
 
 ---
 
-### 6. 開発サーバーの起動
-
-```bash
-npm install
-npm run dev
-```
-
-管理画面は `http://localhost:3000/admin` からアクセスできる。
-
----
 
 ## デプロイ（Vercel）
 
@@ -179,7 +169,16 @@ npm run dev
 
 ## キャストアカウントの追加方法
 
-1. `/admin/cast` でキャストのプロフィールを先に作成する
-2. `/admin/accounts` を開き、**アカウント追加** ボタンをクリック
-3. メールアドレス・パスワードを入力し、紐付けるキャストを選択して作成
-4. システムが自動で Auth ユーザーの作成と `profiles` への登録を行う
+1. **Authentication > Users** で **Invite user** からキャストのメールアドレスを招待
+2. キャストがパスワードを設定してログイン
+3. 先にキャストのプロフィールを `/admin/cast` から作成しておく
+4. **SQL Editor** で以下を実行してキャスト権限を付与する
+
+```sql
+insert into profiles (id, role, cast_id)
+values (
+  'キャストのUUID',
+  'cast',
+  'キャストテーブルのID'
+);
+```

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { createClient } from '@/lib/supabase';
-import type { Cast } from '@/types';
+import type { Cast, Role } from '@/types';
 
 type CastAccount = {
   user_id: string;
@@ -16,6 +16,7 @@ export default function AccountsPage() {
   const [accounts, setAccounts] = useState<CastAccount[]>([]);
   const [casts, setCasts] = useState<Cast[]>([]);
   const [loading, setLoading] = useState(true);
+  const [role, setRole] = useState<Role | null>(null);
   const [showForm, setShowForm] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -25,7 +26,23 @@ export default function AccountsPage() {
   const load = async () => {
     setLoading(true);
     try {
-      const [accountsRes, supabase] = [await fetch('/api/admin/list-cast-accounts'), createClient()];
+      const supabase = createClient();
+
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const { data: profileData } = await supabase
+          .from('profiles')
+          .select('role')
+          .eq('id', user.id)
+          .single();
+        setRole((profileData?.role as Role) ?? null);
+        if (profileData?.role !== 'owner') {
+          setLoading(false);
+          return;
+        }
+      }
+
+      const [accountsRes] = [await fetch('/api/admin/list-cast-accounts')];
       const { accounts: data } = await accountsRes.json();
       setAccounts(data ?? []);
 
@@ -75,6 +92,14 @@ export default function AccountsPage() {
       alert(err instanceof Error ? err.message : '削除に失敗しました');
     }
   };
+
+  if (!loading && role !== null && role !== 'owner') {
+    return (
+      <div className="p-8 text-center text-gray-400 text-sm">
+        この画面はオーナーのみ利用できます
+      </div>
+    );
+  }
 
   // すでにアカウントが紐付いている cast_id を除外
   const linkedCastIds = new Set(accounts.map((a) => a.cast_id).filter(Boolean));
