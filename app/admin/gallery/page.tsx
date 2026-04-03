@@ -7,7 +7,7 @@ import ImageUpload from '@/components/admin/ImageUpload';
 import type { Gallery } from '@/types';
 
 export default function AdminGalleryPage() {
-  const [galleries, setGalleries] = useState<Gallery[]>([]);
+  const [gallery, setGalleries] = useState<Gallery[]>([]);
   const [loading, setLoading] = useState(true);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editForm, setEditForm] = useState({ caption: '', category: '' });
@@ -17,7 +17,7 @@ export default function AdminGalleryPage() {
     try {
       const supabase = createClient();
       const { data } = await supabase
-        .from('galleries')
+        .from('gallery')
         .select('*')
         .order('sort_order');
       setGalleries((data as Gallery[]) ?? []);
@@ -33,8 +33,8 @@ export default function AdminGalleryPage() {
   const handleUpload = async (url: string) => {
     try {
       const supabase = createClient();
-      const maxSortOrder = galleries.reduce((max, g) => Math.max(max, g.sort_order), 0);
-      const { error } = await supabase.from('galleries').insert([{
+      const maxSortOrder = gallery.reduce((max, g) => Math.max(max, g.sort_order), 0);
+      const { error } = await supabase.from('gallery').insert([{
         image_url: url,
         is_public: false,
         sort_order: maxSortOrder + 1,
@@ -50,7 +50,7 @@ export default function AdminGalleryPage() {
     try {
       const supabase = createClient();
       await supabase
-        .from('galleries')
+        .from('gallery')
         .update({ is_public: !item.is_public })
         .eq('id', item.id);
       setGalleries((prev) =>
@@ -70,7 +70,7 @@ export default function AdminGalleryPage() {
     try {
       const supabase = createClient();
       await supabase
-        .from('galleries')
+        .from('gallery')
         .update({ caption: editForm.caption || null, category: editForm.category || null })
         .eq('id', id);
       setGalleries((prev) =>
@@ -90,7 +90,7 @@ export default function AdminGalleryPage() {
     if (!confirm('本当に削除しますか？')) return;
     try {
       const supabase = createClient();
-      await supabase.from('galleries').delete().eq('id', id);
+      await supabase.from('gallery').delete().eq('id', id);
       setGalleries((prev) => prev.filter((g) => g.id !== id));
     } catch (err) {
       alert('削除に失敗しました: ' + String(err));
@@ -114,11 +114,11 @@ export default function AdminGalleryPage() {
       {/* Grid */}
       {loading ? (
         <div className="p-8 text-center text-gray-400 text-sm">読み込み中...</div>
-      ) : galleries.length === 0 ? (
+      ) : gallery.length === 0 ? (
         <div className="p-8 text-center text-gray-400 text-sm">ギャラリーがありません</div>
       ) : (
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
-          {galleries.map((item) => (
+          {gallery.map((item) => (
             <div key={item.id} className="bg-white rounded-xl border border-gray-100 overflow-hidden group">
               {/* Image */}
               <div className="relative aspect-square bg-gray-100">

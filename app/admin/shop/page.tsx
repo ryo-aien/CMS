@@ -33,7 +33,7 @@ export default function AdminShopPage() {
     const load = async () => {
       try {
         const supabase = createClient();
-        const { data } = await supabase.from('shops').select('*').single();
+        const { data } = await supabase.from('shop').select('*').single();
         if (data) {
           const shop = data as Shop;
           setShopId(shop.id);
@@ -88,10 +88,10 @@ export default function AdminShopPage() {
       };
 
       if (shopId !== null) {
-        const { error } = await supabase.from('shops').update(payload).eq('id', shopId);
+        const { error } = await supabase.from('shop').update(payload).eq('id', shopId);
         if (error) throw error;
       } else {
-        const { data, error } = await supabase.from('shops').insert([payload]).select().single();
+        const { data, error } = await supabase.from('shop').insert([payload]).select().single();
         if (error) throw error;
         setShopId((data as Shop).id);
       }

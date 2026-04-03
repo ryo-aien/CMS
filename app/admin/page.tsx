@@ -8,7 +8,7 @@ type Counts = {
   casts: number;
   schedules: number;
   news: number;
-  galleries: number;
+  gallery: number;
 };
 
 const cards = [
@@ -49,7 +49,7 @@ const cards = [
     suffix: '件',
   },
   {
-    key: 'galleries' as keyof Counts,
+    key: 'gallery' as keyof Counts,
     label: 'ギャラリー',
     href: '/admin/gallery',
     icon: (
@@ -63,7 +63,7 @@ const cards = [
 ];
 
 export default function AdminDashboard() {
-  const [counts, setCounts] = useState<Counts>({ casts: 0, schedules: 0, news: 0, galleries: 0 });
+  const [counts, setCounts] = useState<Counts>({ casts: 0, schedules: 0, news: 0, gallery: 0 });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -75,7 +75,7 @@ export default function AdminDashboard() {
         const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
         const endOfMonthStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(endOfMonth.getDate()).padStart(2, '0')}`;
 
-        const [castsRes, schedulesRes, newsRes, galleriesRes] = await Promise.all([
+        const [castsRes, schedulesRes, newsRes, galleryRes] = await Promise.all([
           supabase.from('casts').select('id', { count: 'exact', head: true }),
           supabase
             .from('schedules')
@@ -83,14 +83,14 @@ export default function AdminDashboard() {
             .gte('date', startOfMonth)
             .lte('date', endOfMonthStr),
           supabase.from('news').select('id', { count: 'exact', head: true }),
-          supabase.from('galleries').select('id', { count: 'exact', head: true }),
+          supabase.from('gallery').select('id', { count: 'exact', head: true }),
         ]);
 
         setCounts({
           casts: castsRes.count ?? 0,
           schedules: schedulesRes.count ?? 0,
           news: newsRes.count ?? 0,
-          galleries: galleriesRes.count ?? 0,
+          gallery: galleryRes.count ?? 0,
         });
       } catch {
         // ignore
