@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { getNewsList } from '@/lib/microcms';
+import { getNewsList } from '@/lib/data';
 import NewsCard from '@/components/NewsCard';
 
 export const metadata: Metadata = {
@@ -10,8 +10,8 @@ export const metadata: Metadata = {
 export const revalidate = 3600;
 
 export default async function NewsListPage() {
-  const result = await getNewsList(20).catch(() => ({ contents: [], totalCount: 0 }));
-  const newsList = result.contents;
+  const result = await getNewsList(20).catch(() => ({ data: [], count: 0 }));
+  const newsList = result.data;
 
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 py-12 sm:py-16">

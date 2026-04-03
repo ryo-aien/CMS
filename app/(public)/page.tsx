@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { getShop, getTodaySchedule, getLatestNews } from '@/lib/microcms';
+import { getShop, getTodaySchedule, getLatestNews } from '@/lib/data';
 import CastCard from '@/components/CastCard';
 import NewsCard from '@/components/NewsCard';
 
@@ -17,9 +17,9 @@ export default async function HomePage() {
     <>
       {/* Hero */}
       <section className="relative min-h-[80vh] sm:min-h-screen flex items-end pb-16 sm:pb-24 overflow-hidden">
-        {shop?.top_banner ? (
+        {shop?.top_banner_url ? (
           <Image
-            src={shop.top_banner.url}
+            src={shop.top_banner_url}
             alt={shop.shop_name ?? 'CONCAFE'}
             fill
             priority
@@ -59,7 +59,7 @@ export default async function HomePage() {
       </section>
 
       {/* Today's Cast */}
-      {todaySchedule && todaySchedule.casts.length > 0 && (
+      {todaySchedule && todaySchedule.casts && todaySchedule.casts.length > 0 && (
         <section className="py-16 sm:py-20 max-w-7xl mx-auto px-4 sm:px-6">
           <div className="mb-10">
             <p className="section-title">Today&apos;s Cast</p>

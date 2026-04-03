@@ -1,45 +1,20 @@
 # コンカフェ公式ウェブサイト
 
-コンセプトカフェの公式ウェブサイト。Next.js + microCMS で構築。
+コンセプトカフェの公式ウェブサイト＋自作CMS。Next.js + Supabase で構築。
 
 ## 技術スタック
 
 - **Next.js 14** (App Router)
 - **TypeScript**
 - **Tailwind CSS**
-- **microCMS**
+- **Supabase**（データベース・画像ストレージ・認証）
 - **Vercel**
 
-## セットアップ
-
-### 1. 依存パッケージのインストール
-
-```bash
-npm install
-```
-
-### 2. 環境変数の設定
-
-`.env.local.example` をコピーして `.env.local` を作成し、各値を設定する。
-
-```bash
-cp env.local.example .env.local
-```
-
-| 変数名 | 説明 |
-|--------|------|
-| `MICROCMS_SERVICE_DOMAIN` | microCMS のサービスドメイン（例: `your-service.microcms.io` の `your-service` 部分） |
-| `MICROCMS_API_KEY` | microCMS の API キー |
-| `REVALIDATE_SECRET` | Webhook のシークレットキー（任意の文字列） |
-| `PREVIEW_SECRET` | プレビュー機能のシークレットキー（任意の文字列） |
-
-### 3. 開発サーバーの起動
-
-```bash
-npm run dev
-```
+---
 
 ## ページ構成
+
+### 公開サイト
 
 | パス | 内容 |
 |------|------|
@@ -54,109 +29,281 @@ npm run dev
 | `/access` | アクセス |
 | `/recruit` | 採用情報 |
 
-## microCMS スキーマ
+### 管理画面
 
-### キャスト (`cast`)
+| パス | 内容 |
+|------|------|
+| `/admin/login` | ログイン |
+| `/admin` | ダッシュボード |
+| `/admin/cast` | キャスト管理 |
+| `/admin/schedule` | シフト管理 |
+| `/admin/news` | ニュース管理 |
+| `/admin/gallery` | ギャラリー管理 |
+| `/admin/shop` | 店舗情報管理 |
 
-| フィールド | 型 | 説明 |
-|-----------|-----|------|
-| name | テキスト | 名前 |
-| slug | テキスト | URL スラッグ |
-| main_image | 画像 | メイン画像 |
-| sub_images | 画像（複数） | サブ画像 |
-| message | テキストエリア | メッセージ |
-| birthday | テキスト | 誕生日 |
-| blood_type | テキスト | 血液型 |
-| hobby | テキスト | 趣味 |
-| x_url | テキスト | X (Twitter) URL |
-| instagram_url | テキスト | Instagram URL |
-| tiktok_url | テキスト | TikTok URL |
-| status | テキスト | ステータス |
-| is_public | 真偽値 | 公開フラグ |
-| sort_order | 数値 | 表示順 |
+---
 
-### 出勤スケジュール (`schedule`)
+## セットアップ
 
-| フィールド | 型 | 説明 |
-|-----------|-----|------|
-| date | 日付 | 出勤日 |
-| casts | コンテンツ参照（複数） | 出勤キャスト |
-| note | テキスト | 備考 |
-| is_public | 真偽値 | 公開フラグ |
+### 1. Supabase プロジェクト作成
 
-### ニュース (`news`)
+1. [supabase.com](https://supabase.com) にログインし、**New Project** を作成
+2. プロジェクト名・パスワード・リージョン（Northeast Asia / Tokyo 推奨）を設定
 
-| フィールド | 型 | 説明 |
-|-----------|-----|------|
-| title | テキスト | タイトル |
-| slug | テキスト | URL スラッグ |
-| category | テキスト | カテゴリ |
-| thumbnail | 画像 | サムネイル |
-| content | リッチエディタ | 本文 |
-| published_at | 日付 | 公開日 |
-| is_public | 真偽値 | 公開フラグ |
+---
 
-### ギャラリー (`gallery`)
+### 2. データベースのテーブル作成
 
-| フィールド | 型 | 説明 |
-|-----------|-----|------|
-| image | 画像 | 画像 |
-| caption | テキスト | キャプション |
-| category | テキスト | カテゴリ |
-| is_public | 真偽値 | 公開フラグ |
-| sort_order | 数値 | 表示順 |
+Supabase の **SQL Editor** を開き、以下の SQL を順番に実行する。
 
-### 店舗情報 (`shop`)
+#### テーブル作成
 
-オブジェクト形式（単一コンテンツ）。
+```sql
+-- キャスト
+create table casts (
+  id uuid primary key default gen_random_uuid(),
+  name text not null,
+  slug text not null unique,
+  main_image_url text,
+  sub_image_urls text[] default '{}',
+  message text,
+  birthday text,
+  blood_type text,
+  hobby text,
+  x_url text,
+  instagram_url text,
+  tiktok_url text,
+  status text,
+  default_workdays int[] default '{}',
+  is_public boolean default false,
+  sort_order int default 0,
+  created_at timestamptz default now(),
+  updated_at timestamptz default now()
+);
 
-| フィールド | 型 | 説明 |
-|-----------|-----|------|
-| shop_name | テキスト | 店舗名 |
-| business_hours | テキスト | 営業時間 |
-| closed_days | テキスト | 定休日 |
-| address | テキスト | 住所 |
-| google_map_embed_url | テキスト | Google マップ埋め込み URL |
-| top_banner | 画像 | トップバナー画像 |
-| line_url | テキスト | LINE URL |
-| form_url | テキスト | 応募フォーム URL |
-| apply_type | セレクト | 応募導線（`line` / `form` / `both`） |
-| system_text | リッチエディタ | 料金・メニュー本文 |
-| access_text | リッチエディタ | アクセス本文 |
-| recruit_text | リッチエディタ | 採用情報本文 |
+-- 出勤スケジュール
+create table schedules (
+  id uuid primary key default gen_random_uuid(),
+  date date not null unique,
+  note text,
+  is_public boolean default false,
+  created_at timestamptz default now(),
+  updated_at timestamptz default now()
+);
 
-## Webhook 設定
+-- シフト×キャスト中間テーブル
+create table schedule_casts (
+  schedule_id uuid references schedules(id) on delete cascade,
+  cast_id uuid references casts(id) on delete cascade,
+  primary key (schedule_id, cast_id)
+);
 
-microCMS の Webhook を以下のエンドポイントに向ける。
+-- ニュース
+create table news (
+  id uuid primary key default gen_random_uuid(),
+  title text not null,
+  slug text not null unique,
+  category text,
+  thumbnail_url text,
+  content text,
+  published_at date,
+  is_public boolean default false,
+  created_at timestamptz default now(),
+  updated_at timestamptz default now()
+);
 
+-- ギャラリー
+create table gallery (
+  id uuid primary key default gen_random_uuid(),
+  image_url text not null,
+  caption text,
+  category text,
+  is_public boolean default false,
+  sort_order int default 0,
+  created_at timestamptz default now()
+);
+
+-- 店舗情報（常に1行）
+create table shop (
+  id int primary key default 1,
+  shop_name text,
+  business_hours text,
+  closed_days text,
+  address text,
+  google_map_embed_url text,
+  top_banner_url text,
+  line_url text,
+  form_url text,
+  apply_type text default 'both',
+  system_text text,
+  access_text text,
+  recruit_text text,
+  updated_at timestamptz default now()
+);
+
+-- 店舗情報の初期レコード挿入
+insert into shop (id) values (1);
+
+-- ユーザープロフィール（権限管理）
+create table profiles (
+  id uuid references auth.users(id) on delete cascade primary key,
+  role text not null default 'cast',
+  cast_id uuid references casts(id),
+  created_at timestamptz default now()
+);
 ```
-POST https://your-domain.vercel.app/api/revalidate?secret=REVALIDATE_SECRET
+
+#### Row Level Security（RLS）の設定
+
+```sql
+-- RLS を有効化
+alter table casts enable row level security;
+alter table schedules enable row level security;
+alter table schedule_casts enable row level security;
+alter table news enable row level security;
+alter table gallery enable row level security;
+alter table shop enable row level security;
+alter table profiles enable row level security;
+
+-- 公開サイト向け：全員が公開済みコンテンツを読める
+create policy "public can read public casts"
+  on casts for select using (is_public = true);
+
+create policy "public can read public schedules"
+  on schedules for select using (is_public = true);
+
+create policy "public can read schedule_casts"
+  on schedule_casts for select using (true);
+
+create policy "public can read public news"
+  on news for select using (is_public = true);
+
+create policy "public can read public gallery"
+  on gallery for select using (is_public = true);
+
+create policy "public can read shop"
+  on shop for select using (true);
+
+-- 認証済みユーザーは全コンテンツを読める（管理画面用）
+create policy "authenticated can read all casts"
+  on casts for select to authenticated using (true);
+
+create policy "authenticated can read all schedules"
+  on schedules for select to authenticated using (true);
+
+create policy "authenticated can read all news"
+  on news for select to authenticated using (true);
+
+create policy "authenticated can read all gallery"
+  on gallery for select to authenticated using (true);
+
+create policy "authenticated can read profiles"
+  on profiles for select to authenticated using (true);
+
+-- オーナーは全テーブルを操作できる
+create policy "owner can do everything on casts"
+  on casts for all to authenticated
+  using ((select role from profiles where id = auth.uid()) = 'owner');
+
+create policy "owner can do everything on schedules"
+  on schedules for all to authenticated
+  using ((select role from profiles where id = auth.uid()) = 'owner');
+
+create policy "owner can do everything on schedule_casts"
+  on schedule_casts for all to authenticated
+  using ((select role from profiles where id = auth.uid()) = 'owner');
+
+create policy "owner can do everything on news"
+  on news for all to authenticated
+  using ((select role from profiles where id = auth.uid()) = 'owner');
+
+create policy "owner can do everything on gallery"
+  on gallery for all to authenticated
+  using ((select role from profiles where id = auth.uid()) = 'owner');
+
+create policy "owner can do everything on shop"
+  on shop for all to authenticated
+  using ((select role from profiles where id = auth.uid()) = 'owner');
+
+create policy "owner can manage profiles"
+  on profiles for all to authenticated
+  using ((select role from profiles where id = auth.uid()) = 'owner');
+
+-- キャストは自分のプロフィールのみ更新できる
+create policy "cast can update own profile"
+  on casts for update to authenticated
+  using (id = (select cast_id from profiles where id = auth.uid()));
+
+-- キャストは自分が含まれるシフトのみ更新できる
+create policy "cast can update own schedule"
+  on schedules for update to authenticated
+  using (
+    id in (
+      select schedule_id from schedule_casts
+      where cast_id = (select cast_id from profiles where id = auth.uid())
+    )
+  );
 ```
 
-リクエストボディの `api` フィールドで更新対象を指定する。
+---
 
-| `api` の値 | 再検証されるページ |
-|-----------|----------------|
-| `cast` | `/cast`, `/` |
-| `news` | `/news`, `/` |
-| `schedule` | `/schedule`, `/` |
-| `shop` | `/`, `/system`, `/access`, `/recruit` |
-| `gallery` | `/gallery` |
+### 3. Storage のバケット作成
 
-## プレビュー
+Supabase の **Storage** を開き、以下のバケットを作成する。  
+各バケットとも **Public bucket** にチェックを入れること。
 
-下書きコンテンツのプレビューは以下の URL で確認できる。
-
-```
-GET https://your-domain.vercel.app/api/preview?secret=PREVIEW_SECRET&draftKey=DRAFT_KEY&contentType=CONTENT_TYPE&slug=SLUG
-```
-
-| パラメータ | 説明 |
+| バケット名 | 用途 |
 |-----------|------|
-| `secret` | `PREVIEW_SECRET` の値 |
-| `draftKey` | microCMS の下書きキー |
-| `contentType` | `cast` / `news` / `schedule` / `gallery` / `shop` |
-| `slug` | コンテンツのスラッグ（cast・news の詳細ページ用） |
+| `cast-images` | キャスト画像 |
+| `news-images` | ニュース画像 |
+| `gallery-images` | ギャラリー画像 |
+| `shop-images` | 店舗バナー画像 |
+
+---
+
+### 4. オーナーアカウントの作成
+
+1. Supabase の **Authentication > Users** を開く
+2. **Invite user** でオーナーのメールアドレスを入力して招待メールを送る
+3. オーナーがメールのリンクからパスワードを設定してログイン完了
+4. 作成されたユーザーの UUID を確認し、**SQL Editor** で以下を実行してオーナー権限を付与する
+
+```sql
+insert into profiles (id, role)
+values ('ここにオーナーのUUIDを貼る', 'owner');
+```
+
+---
+
+### 5. 環境変数の設定
+
+Supabase の **Project Settings > API** から値をコピーする。
+
+`.env.local.example` をコピーして `.env.local` を作成する。
+
+```bash
+cp env.local.example .env.local
+```
+
+| 変数名 | 取得場所 | 説明 |
+|--------|---------|------|
+| `NEXT_PUBLIC_SUPABASE_URL` | Project Settings > API > Project URL | Supabase プロジェクトの URL |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Project Settings > API > anon public | 公開鍵 |
+| `SUPABASE_SERVICE_ROLE_KEY` | Project Settings > API > service_role | 秘密鍵（サーバーサイドのみ使用） |
+| `REVALIDATE_SECRET` | 任意の文字列 | ページ再生成用のシークレット |
+
+---
+
+### 6. 開発サーバーの起動
+
+```bash
+npm install
+npm run dev
+```
+
+管理画面は `http://localhost:3000/admin` からアクセスできる。
+
+---
 
 ## デプロイ（Vercel）
 
@@ -167,12 +314,10 @@ GET https://your-domain.vercel.app/api/preview?secret=PREVIEW_SECRET&draftKey=DR
 
 ### 2. プロジェクト設定
 
-以下の設定を確認する（基本的に自動検出されるが念のため確認）。
-
 | 項目 | 設定値 |
 |------|--------|
 | Framework Preset | `Next.js` |
-| Root Directory | `.`（リポジトリのルート） |
+| Root Directory | `.`（デフォルトのまま） |
 | Build Command | `npm run build`（デフォルトのまま） |
 | Output Directory | `.next`（デフォルトのまま） |
 | Install Command | `npm install`（デフォルトのまま） |
@@ -181,13 +326,31 @@ GET https://your-domain.vercel.app/api/preview?secret=PREVIEW_SECRET&draftKey=DR
 
 **Environment Variables** セクションで以下を追加する。
 
-| Name | Value | Environment |
-|------|-------|-------------|
-| `MICROCMS_SERVICE_DOMAIN` | microCMS のサービスドメイン | Production, Preview, Development |
-| `MICROCMS_API_KEY` | microCMS の API キー | Production, Preview, Development |
-| `REVALIDATE_SECRET` | 任意の文字列 | Production, Preview, Development |
-| `PREVIEW_SECRET` | 任意の文字列 | Production, Preview, Development |
+| Name | Environment |
+|------|-------------|
+| `NEXT_PUBLIC_SUPABASE_URL` | Production, Preview, Development |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Production, Preview, Development |
+| `SUPABASE_SERVICE_ROLE_KEY` | Production, Preview, Development |
+| `REVALIDATE_SECRET` | Production, Preview, Development |
 
 ### 4. デプロイ
 
 **Deploy** ボタンを押してデプロイ完了。以降は `main` ブランチへの push で自動デプロイされる。
+
+---
+
+## キャストアカウントの追加方法
+
+1. **Authentication > Users** で **Invite user** からキャストのメールアドレスを招待
+2. キャストがパスワードを設定してログイン
+3. 先にキャストのプロフィールを `/admin/cast` から作成しておく
+4. **SQL Editor** で以下を実行してキャスト権限を付与する
+
+```sql
+insert into profiles (id, role, cast_id)
+values (
+  'キャストのUUID',
+  'cast',
+  'キャストテーブルのID'
+);
+```

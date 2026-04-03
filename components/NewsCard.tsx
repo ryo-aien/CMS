@@ -6,7 +6,7 @@ type Props = {
   news: News;
 };
 
-function formatDate(dateStr?: string) {
+function formatDate(dateStr?: string | null) {
   if (!dateStr) return '';
   const d = new Date(dateStr);
   return d.toLocaleDateString('ja-JP', {
@@ -24,9 +24,9 @@ export default function NewsCard({ news }: Props) {
     >
       {/* Thumbnail */}
       <div className="relative flex-shrink-0 w-24 h-24 sm:w-28 sm:h-28 overflow-hidden rounded-md bg-surface-2">
-        {news.thumbnail ? (
+        {news.thumbnail_url ? (
           <Image
-            src={news.thumbnail.url}
+            src={news.thumbnail_url}
             alt={news.title}
             fill
             sizes="112px"
@@ -52,7 +52,7 @@ export default function NewsCard({ news }: Props) {
           </h3>
         </div>
         <p className="mt-2 text-xs text-text-muted">
-          {formatDate(news.published_at ?? news.createdAt)}
+          {formatDate(news.published_at ?? news.created_at)}
         </p>
       </div>
     </Link>

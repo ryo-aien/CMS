@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { getCastBySlug, getCastSlugs } from '@/lib/microcms';
+import { getCastBySlug, getCastSlugs } from '@/lib/data';
 
 type Props = {
   params: { slug: string };
@@ -54,9 +54,9 @@ export default async function CastDetailPage({ params }: Props) {
         {/* Main Image */}
         <div>
           <div className="relative aspect-[3/4] rounded-xl overflow-hidden bg-surface-2">
-            {cast.main_image && (
+            {cast.main_image_url && (
               <Image
-                src={cast.main_image.url}
+                src={cast.main_image_url}
                 alt={cast.name}
                 fill
                 priority
@@ -74,12 +74,12 @@ export default async function CastDetailPage({ params }: Props) {
           </div>
 
           {/* Sub Images */}
-          {cast.sub_images && cast.sub_images.length > 0 && (
+          {cast.sub_image_urls && cast.sub_image_urls.length > 0 && (
             <div className="grid grid-cols-3 gap-2 mt-2">
-              {cast.sub_images.map((img, i) => (
+              {cast.sub_image_urls.map((url, i) => (
                 <div key={i} className="relative aspect-square rounded-lg overflow-hidden bg-surface-2">
                   <Image
-                    src={img.url}
+                    src={url}
                     alt={`${cast.name} - ${i + 1}`}
                     fill
                     sizes="(max-width: 768px) 33vw, 16vw"

@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { getShop } from '@/lib/microcms';
+import { getShop } from '@/lib/data';
 
 export const metadata: Metadata = {
   title: 'SYSTEM',

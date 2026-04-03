@@ -1,28 +1,25 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { revalidatePath } from 'next/cache';
 
+// POST /api/revalidate
+// body: { type: 'cast' | 'news' | 'schedule' | 'shop' | 'gallery', secret: string }
 export async function POST(request: NextRequest) {
-  const secret = request.nextUrl.searchParams.get('secret');
-
-  // Verify secret
-  if (secret !== process.env.REVALIDATE_SECRET) {
-    return NextResponse.json(
-      { message: 'Invalid secret' },
-      { status: 401 }
-    );
-  }
-
-  let body: { api?: string } = {};
+  let body: { type?: string; secret?: string } = {};
   try {
     body = await request.json();
   } catch {
-    // body might be empty
+    return NextResponse.json({ message: 'Invalid JSON body' }, { status: 400 });
   }
 
-  const api = body?.api ?? '';
+  // Verify secret
+  if (body.secret !== process.env.REVALIDATE_SECRET) {
+    return NextResponse.json({ message: 'Invalid secret' }, { status: 401 });
+  }
+
+  const type = body.type ?? '';
 
   try {
-    switch (api) {
+    switch (type) {
       case 'cast':
         revalidatePath('/cast', 'layout');
         revalidatePath('/', 'page');
@@ -57,7 +54,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       revalidated: true,
-      api,
+      type,
       now: Date.now(),
     });
   } catch (err) {

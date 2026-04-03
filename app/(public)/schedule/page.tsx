@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
-import { getSchedules } from '@/lib/microcms';
+import { getSchedules } from '@/lib/data';
 
 export const metadata: Metadata = {
   title: 'SCHEDULE',
@@ -85,7 +85,7 @@ export default async function SchedulePage() {
                 </div>
 
                 {/* Casts */}
-                {schedule.casts.length > 0 ? (
+                {schedule.casts && schedule.casts.length > 0 ? (
                   <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3">
                     {schedule.casts.map((cast) => (
                       <Link
@@ -94,9 +94,9 @@ export default async function SchedulePage() {
                         className="group text-center"
                       >
                         <div className="relative aspect-square rounded-full overflow-hidden bg-surface-2 mb-2 mx-auto w-16 sm:w-20">
-                          {cast.main_image && (
+                          {cast.main_image_url && (
                             <Image
-                              src={cast.main_image.url}
+                              src={cast.main_image_url}
                               alt={cast.name}
                               fill
                               sizes="80px"

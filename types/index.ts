@@ -1,65 +1,84 @@
-import type { MicroCMSImage, MicroCMSListContent, MicroCMSObjectContent } from 'microcms-js-sdk';
+export type Role = 'owner' | 'cast';
 
-export type { MicroCMSImage };
+export type Profile = {
+  id: string;
+  role: Role;
+  cast_id: string | null;
+  created_at: string;
+};
 
-// キャスト
-export type Cast = MicroCMSListContent & {
+export type Cast = {
+  id: string;
   name: string;
   slug: string;
-  main_image: MicroCMSImage;
-  sub_images?: MicroCMSImage[];
-  message?: string;
-  birthday?: string;
-  blood_type?: string;
-  hobby?: string;
-  x_url?: string;
-  instagram_url?: string;
-  tiktok_url?: string;
-  status?: string;
+  main_image_url: string | null;
+  sub_image_urls: string[];
+  message: string | null;
+  birthday: string | null;
+  blood_type: string | null;
+  hobby: string | null;
+  x_url: string | null;
+  instagram_url: string | null;
+  tiktok_url: string | null;
+  status: string | null;
+  default_workdays: number[];
   is_public: boolean;
-  sort_order?: number;
+  sort_order: number;
+  created_at: string;
+  updated_at: string;
 };
 
-// 出勤スケジュール
-export type Schedule = MicroCMSListContent & {
+export type Schedule = {
+  id: string;
   date: string;
-  casts: Cast[];
-  note?: string;
+  note: string | null;
   is_public: boolean;
+  created_at: string;
+  updated_at: string;
+  casts?: Cast[];
 };
 
-// ニュース
-export type News = MicroCMSListContent & {
+export type ScheduleCast = {
+  schedule_id: string;
+  cast_id: string;
+};
+
+export type News = {
+  id: string;
   title: string;
   slug: string;
-  category?: string;
-  thumbnail?: MicroCMSImage;
-  content: string;
-  published_at?: string;
+  category: string | null;
+  thumbnail_url: string | null;
+  content: string | null;
+  published_at: string | null;
   is_public: boolean;
+  created_at: string;
+  updated_at: string;
 };
 
-// ギャラリー
-export type Gallery = MicroCMSListContent & {
-  image: MicroCMSImage;
-  caption?: string;
-  category?: string;
+export type Gallery = {
+  id: string;
+  image_url: string;
+  caption: string | null;
+  category: string | null;
   is_public: boolean;
-  sort_order?: number;
+  sort_order: number;
+  created_at: string;
 };
 
-// 店舗情報
-export type Shop = MicroCMSObjectContent & {
-  shop_name: string;
-  business_hours?: string;
-  closed_days?: string;
-  address?: string;
-  google_map_embed_url?: string;
-  top_banner?: MicroCMSImage;
-  line_url?: string;
-  form_url?: string;
-  apply_type?: 'line' | 'form' | 'both';
-  system_text?: string;
-  access_text?: string;
-  recruit_text?: string;
+export type Shop = {
+  id: number;
+  shop_name: string | null;
+  business_hours: string | null;
+  closed_days: string | null;
+  address: string | null;
+  google_map_embed_url: string | null;
+  top_banner_url: string | null;
+  line_url: string | null;
+  form_url: string | null;
+  apply_type: 'line' | 'form' | 'both';
+  system_text: string | null;
+  access_text: string | null;
+  recruit_text: string | null;
+  updated_at: string;
 };

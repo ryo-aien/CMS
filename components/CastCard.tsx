@@ -12,9 +12,9 @@ export default function CastCard({ cast }: Props) {
       href={`/cast/${cast.slug}`}
       className="group relative block aspect-[3/4] overflow-hidden rounded-lg bg-surface-2"
     >
-      {cast.main_image && (
+      {cast.main_image_url && (
         <Image
-          src={cast.main_image.url}
+          src={cast.main_image_url}
           alt={cast.name}
           fill
           sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"

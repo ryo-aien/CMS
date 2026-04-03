@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { getNewsBySlug, getNewsSlugs } from '@/lib/microcms';
+import { getNewsBySlug, getNewsSlugs } from '@/lib/data';
 
 type Props = {
   params: { slug: string };
@@ -21,14 +21,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     description: news.title,
     openGraph: {
       title: news.title,
-      images: news.thumbnail ? [{ url: news.thumbnail.url }] : [],
+      images: news.thumbnail_url ? [{ url: news.thumbnail_url }] : [],
     },
   };
 }
 
 export const revalidate = 3600;
 
-function formatDate(dateStr?: string) {
+function formatDate(dateStr?: string | null) {
   if (!dateStr) return '';
   const d = new Date(dateStr);
   return d.toLocaleDateString('ja-JP', {
@@ -66,7 +66,7 @@ export default async function NewsDetailPage({ params }: Props) {
           </span>
         )}
         <span className="text-xs text-text-muted">
-          {formatDate(news.published_at ?? news.createdAt)}
+          {formatDate(news.published_at ?? news.created_at)}
         </span>
       </div>
 
@@ -76,10 +76,10 @@ export default async function NewsDetailPage({ params }: Props) {
       </h1>
 
       {/* Thumbnail */}
-      {news.thumbnail && (
+      {news.thumbnail_url && (
         <div className="relative aspect-video w-full overflow-hidden rounded-xl mb-10 bg-surface-2">
           <Image
-            src={news.thumbnail.url}
+            src={news.thumbnail_url}
             alt={news.title}
             fill
             priority
@@ -90,10 +90,12 @@ export default async function NewsDetailPage({ params }: Props) {
       )}
 
       {/* Content */}
-      <div
-        className="richtext"
-        dangerouslySetInnerHTML={{ __html: news.content }}
-      />
+      {news.content && (
+        <div
+          className="richtext"
+          dangerouslySetInnerHTML={{ __html: news.content }}
+        />
+      )}
 
       {/* Back to list */}
       <div className="mt-12 pt-8 border-t border-border">

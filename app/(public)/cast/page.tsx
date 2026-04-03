@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { getCasts } from '@/lib/microcms';
+import { getCasts } from '@/lib/data';
 import CastCard from '@/components/CastCard';
 
 export const metadata: Metadata = {

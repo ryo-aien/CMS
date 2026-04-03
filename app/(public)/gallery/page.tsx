@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { getGalleries } from '@/lib/microcms';
+import { getGalleries } from '@/lib/data';
 import GalleryItem from '@/components/GalleryItem';
 
 export const metadata: Metadata = {

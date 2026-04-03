@@ -20,7 +20,7 @@ export default function GalleryItem({ item }: Props) {
         aria-label={item.caption ?? '画像を拡大表示'}
       >
         <Image
-          src={item.image.url}
+          src={item.image_url}
           alt={item.caption ?? ''}
           fill
           sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
@@ -65,7 +65,7 @@ export default function GalleryItem({ item }: Props) {
           >
             <div className="relative w-full" style={{ paddingBottom: '75%' }}>
               <Image
-                src={item.image.url}
+                src={item.image_url}
                 alt={item.caption ?? ''}
                 fill
                 sizes="(max-width: 768px) 100vw, 768px"
