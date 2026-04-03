@@ -181,7 +181,7 @@ export async function getGalleries(limit = 50): Promise<Gallery[]> {
   try {
     const supabase = createServerSupabaseClient();
     const { data, error } = await supabase
-      .from('galleries')
+      .from('gallery')
       .select('*')
       .eq('is_public', true)
       .order('sort_order')
@@ -200,7 +200,7 @@ export async function getShop(): Promise<Shop | null> {
   try {
     const supabase = createServerSupabaseClient();
     const { data, error } = await supabase
-      .from('shops')
+      .from('shop')
       .select('*')
       .single();
 
