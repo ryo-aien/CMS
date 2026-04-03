@@ -1,6 +1,6 @@
-# コンカフェ公式ウェブサイト
+# 公式ウェブサイト
 
-コンセプトカフェの公式ウェブサイト＋自作CMS。Next.js + Supabase で構築。
+カフェの公式ウェブサイト＋自作CMS。Next.js + Supabase で構築。
 
 ## 技術スタック
 
@@ -277,20 +277,42 @@ values ('ここにオーナーのUUIDを貼る', 'owner');
 
 ### 5. 環境変数の設定
 
-Supabase の **Project Settings > API** から値をコピーする。
-
 `.env.local.example` をコピーして `.env.local` を作成する。
 
 ```bash
 cp env.local.example .env.local
 ```
 
+各値は Supabase の **Project Settings** から取得する。
+
+---
+
+#### `NEXT_PUBLIC_SUPABASE_URL` の取得
+
+**Project Settings > General** を開く。
+
+![General設定画面](docs/images/General.png)
+
+**Project ID** の欄に表示されている値をもとに、以下の形式で設定する。
+
+```
+https://<Project ID>.supabase.co
+```
+
+---
+
+#### `NEXT_PUBLIC_SUPABASE_ANON_KEY` / `SUPABASE_SERVICE_ROLE_KEY` の取得
+
+**Project Settings > API Keys** を開く。
+
+![API Keys設定画面](docs/images/API_Keys.png)
+
 | 変数名 | 取得場所 | 説明 |
 |--------|---------|------|
-| `NEXT_PUBLIC_SUPABASE_URL` | Project Settings > API > Project URL | Supabase プロジェクトの URL |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Project Settings > API > anon public | 公開鍵 |
-| `SUPABASE_SERVICE_ROLE_KEY` | Project Settings > API > service_role | 秘密鍵（サーバーサイドのみ使用） |
-| `REVALIDATE_SECRET` | 任意の文字列 | ページ再生成用のシークレット |
+| `NEXT_PUBLIC_SUPABASE_URL` | Settings > General > Project ID | `https://<ID>.supabase.co` の形式で設定 |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | **Publishable key** > default の API KEY | `sb_publishable_...` で始まるキー。ブラウザに公開してOK |
+| `SUPABASE_SERVICE_ROLE_KEY` | **Secret keys** > default の API KEY（目のアイコンで表示） | `sb_secret_...` で始まるキー。絶対に公開しないこと |
+| `REVALIDATE_SECRET` | 任意の文字列を自分で決める | ISR ページ再生成用。`openssl rand -hex 32` 等で生成推奨 |
 
 ---
 
