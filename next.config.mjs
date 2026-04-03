@@ -12,7 +12,13 @@ const nextConfig = {
         hostname: '*.supabase.co',
         pathname: '/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'api.dicebear.com',
+        pathname: '/**',
+      },
     ],
+    unoptimized: process.env.NODE_ENV === 'development',
   },
 };
 
