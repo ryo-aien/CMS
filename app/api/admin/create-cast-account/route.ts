@@ -32,10 +32,18 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: '権限がありません' }, { status: 403 });
   }
 
-  const { email, password, cast_id } = await request.json();
+  const { email, password, role: newRole, cast_id } = await request.json();
 
-  if (!email || !password || !cast_id) {
-    return NextResponse.json({ error: 'email・password・cast_id は必須です' }, { status: 400 });
+  if (!email || !password) {
+    return NextResponse.json({ error: 'email・password は必須です' }, { status: 400 });
+  }
+
+  if (newRole !== 'cast' && newRole !== 'staff') {
+    return NextResponse.json({ error: 'role は cast または staff のみ指定できます' }, { status: 400 });
+  }
+
+  if (newRole === 'cast' && !cast_id) {
+    return NextResponse.json({ error: 'cast ロールには cast_id が必須です' }, { status: 400 });
   }
 
   // service_role で Auth ユーザー作成
@@ -55,10 +63,14 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: createError?.message ?? 'ユーザー作成に失敗しました' }, { status: 500 });
   }
 
-  // profiles に cast ロールで登録
+  const profilePayload =
+    newRole === 'staff'
+      ? { id: newUser.user.id, role: 'staff' }
+      : { id: newUser.user.id, role: 'cast', cast_id };
+
   const { error: profileError } = await adminClient
     .from('profiles')
-    .insert({ id: newUser.user.id, role: 'cast', cast_id });
+    .insert(profilePayload);
 
   if (profileError) {
     // ロールバック: 作成した Auth ユーザーを削除

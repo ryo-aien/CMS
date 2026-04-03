@@ -37,11 +37,11 @@ export async function GET() {
     { auth: { autoRefreshToken: false, persistSession: false } }
   );
 
-  // cast ロールの profiles を casts と JOIN して取得
-  const { data: castProfiles, error } = await adminClient
+  // cast・staff ロールの profiles を casts と JOIN して取得
+  const { data: profiles, error } = await adminClient
     .from('profiles')
-    .select('id, cast_id, created_at, casts(name)')
-    .eq('role', 'cast');
+    .select('id, role, cast_id, created_at, casts(name)')
+    .in('role', ['cast', 'staff']);
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
@@ -55,9 +55,10 @@ export async function GET() {
 
   const emailMap = new Map(users.map((u) => [u.id, u.email ?? '']));
 
-  const accounts = (castProfiles ?? []).map((p) => ({
+  const accounts = (profiles ?? []).map((p) => ({
     user_id: p.id,
     email: emailMap.get(p.id) ?? '',
+    role: p.role,
     cast_id: p.cast_id,
     cast_name: (p.casts as unknown as { name: string } | null)?.name ?? null,
     created_at: p.created_at,

@@ -4,16 +4,17 @@ import { useEffect, useState } from 'react';
 import { createClient } from '@/lib/supabase';
 import type { Cast, Role } from '@/types';
 
-type CastAccount = {
+type Account = {
   user_id: string;
   email: string;
+  role: 'cast' | 'staff';
   cast_id: string | null;
   cast_name: string | null;
   created_at: string;
 };
 
 export default function AccountsPage() {
-  const [accounts, setAccounts] = useState<CastAccount[]>([]);
+  const [accounts, setAccounts] = useState<Account[]>([]);
   const [casts, setCasts] = useState<Cast[]>([]);
   const [loading, setLoading] = useState(true);
   const [role, setRole] = useState<Role | null>(null);
@@ -21,7 +22,7 @@ export default function AccountsPage() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const [form, setForm] = useState({ email: '', password: '', cast_id: '' });
+  const [form, setForm] = useState({ email: '', password: '', role: 'cast' as 'cast' | 'staff', cast_id: '' });
 
   const load = async () => {
     setLoading(true);
@@ -42,7 +43,7 @@ export default function AccountsPage() {
         }
       }
 
-      const [accountsRes] = [await fetch('/api/admin/list-cast-accounts')];
+      const accountsRes = await fetch('/api/admin/list-cast-accounts');
       const { accounts: data } = await accountsRes.json();
       setAccounts(data ?? []);
 
@@ -60,15 +61,20 @@ export default function AccountsPage() {
     setError(null);
     setSaving(true);
     try {
+      const body =
+        form.role === 'staff'
+          ? { email: form.email, password: form.password, role: 'staff' }
+          : { email: form.email, password: form.password, role: 'cast', cast_id: form.cast_id };
+
       const res = await fetch('/api/admin/create-cast-account', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form),
+        body: JSON.stringify(body),
       });
       const json = await res.json();
       if (!res.ok) throw new Error(json.error);
       setShowForm(false);
-      setForm({ email: '', password: '', cast_id: '' });
+      setForm({ email: '', password: '', role: 'cast', cast_id: '' });
       await load();
     } catch (err) {
       setError(err instanceof Error ? err.message : '作成に失敗しました');
@@ -108,7 +114,7 @@ export default function AccountsPage() {
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-xl font-bold text-gray-800">キャストアカウント管理</h1>
+        <h1 className="text-xl font-bold text-gray-800">アカウント管理</h1>
         <button
           type="button"
           onClick={() => { setShowForm(true); setError(null); }}
@@ -125,8 +131,30 @@ export default function AccountsPage() {
       {/* 追加フォーム */}
       {showForm && (
         <div className="bg-white rounded-xl border border-gray-100 p-6 mb-6">
-          <h2 className="text-sm font-semibold text-gray-700 mb-4">新規キャストアカウント</h2>
+          <h2 className="text-sm font-semibold text-gray-700 mb-4">新規アカウント</h2>
           <form onSubmit={handleCreate} className="space-y-4">
+            {/* ロール選択 */}
+            <div>
+              <label className="block text-xs font-medium text-gray-600 mb-2">ロール *</label>
+              <div className="flex gap-4">
+                {[
+                  { value: 'cast', label: 'キャスト' },
+                  { value: 'staff', label: 'スタッフ' },
+                ].map((opt) => (
+                  <label key={opt.value} className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="radio"
+                      value={opt.value}
+                      checked={form.role === opt.value}
+                      onChange={() => setForm((p) => ({ ...p, role: opt.value as 'cast' | 'staff', cast_id: '' }))}
+                      className="accent-pink-500"
+                    />
+                    <span className="text-sm text-gray-700">{opt.label}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-xs font-medium text-gray-600 mb-1">メールアドレス *</label>
@@ -150,25 +178,29 @@ export default function AccountsPage() {
                 />
               </div>
             </div>
-            <div>
-              <label className="block text-xs font-medium text-gray-600 mb-1">紐付けるキャスト *</label>
-              <select
-                value={form.cast_id}
-                onChange={(e) => setForm((p) => ({ ...p, cast_id: e.target.value }))}
-                required
-                className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-pink-400 bg-white"
-              >
-                <option value="">選択してください</option>
-                {availableCasts.map((c) => (
-                  <option key={c.id} value={c.id}>{c.name}</option>
-                ))}
-              </select>
-              {availableCasts.length === 0 && (
-                <p className="text-xs text-gray-400 mt-1">
-                  アカウント未設定のキャストがいません。先にキャストプロフィールを作成してください。
-                </p>
-              )}
-            </div>
+
+            {/* キャスト紐付け（castロールのみ） */}
+            {form.role === 'cast' && (
+              <div>
+                <label className="block text-xs font-medium text-gray-600 mb-1">紐付けるキャスト *</label>
+                <select
+                  value={form.cast_id}
+                  onChange={(e) => setForm((p) => ({ ...p, cast_id: e.target.value }))}
+                  required
+                  className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-pink-400 bg-white"
+                >
+                  <option value="">選択してください</option>
+                  {availableCasts.map((c) => (
+                    <option key={c.id} value={c.id}>{c.name}</option>
+                  ))}
+                </select>
+                {availableCasts.length === 0 && (
+                  <p className="text-xs text-gray-400 mt-1">
+                    アカウント未設定のキャストがいません。先にキャストプロフィールを作成してください。
+                  </p>
+                )}
+              </div>
+            )}
 
             {error && (
               <div className="p-3 rounded-lg bg-red-50 border border-red-100">
@@ -179,7 +211,7 @@ export default function AccountsPage() {
             <div className="flex gap-3">
               <button
                 type="submit"
-                disabled={saving || availableCasts.length === 0}
+                disabled={saving || (form.role === 'cast' && availableCasts.length === 0)}
                 className="px-5 py-2 rounded-lg text-sm font-medium text-white disabled:opacity-70"
                 style={{ backgroundColor: '#e91e8c' }}
               >
@@ -202,14 +234,15 @@ export default function AccountsPage() {
         {loading ? (
           <div className="p-8 text-center text-gray-400 text-sm">読み込み中...</div>
         ) : accounts.length === 0 ? (
-          <div className="p-8 text-center text-gray-400 text-sm">キャストアカウントがありません</div>
+          <div className="p-8 text-center text-gray-400 text-sm">アカウントがありません</div>
         ) : (
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-gray-100 bg-gray-50">
                 <th className="text-left px-4 py-3 text-xs font-medium text-gray-500">メールアドレス</th>
-                <th className="text-left px-4 py-3 text-xs font-medium text-gray-500">紐付けキャスト</th>
-                <th className="text-left px-4 py-3 text-xs font-medium text-gray-500">作成日</th>
+                <th className="text-left px-4 py-3 text-xs font-medium text-gray-500">ロール</th>
+                <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 hidden sm:table-cell">紐付けキャスト</th>
+                <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 hidden md:table-cell">作成日</th>
                 <th className="text-right px-4 py-3 text-xs font-medium text-gray-500">操作</th>
               </tr>
             </thead>
@@ -217,12 +250,23 @@ export default function AccountsPage() {
               {accounts.map((account) => (
                 <tr key={account.user_id} className="hover:bg-gray-50 transition-colors">
                   <td className="px-4 py-3 text-gray-800">{account.email}</td>
-                  <td className="px-4 py-3 text-gray-600">
+                  <td className="px-4 py-3">
+                    <span
+                      className={`inline-block px-2 py-0.5 rounded-full text-xs font-medium ${
+                        account.role === 'staff'
+                          ? 'bg-blue-100 text-blue-700'
+                          : 'bg-pink-100 text-pink-700'
+                      }`}
+                    >
+                      {account.role === 'staff' ? 'スタッフ' : 'キャスト'}
+                    </span>
+                  </td>
+                  <td className="px-4 py-3 text-gray-600 hidden sm:table-cell">
                     {account.cast_name ?? (
-                      <span className="text-gray-400">未紐付け</span>
+                      <span className="text-gray-400">-</span>
                     )}
                   </td>
-                  <td className="px-4 py-3 text-gray-400 text-xs">
+                  <td className="px-4 py-3 text-gray-400 text-xs hidden md:table-cell">
                     {new Date(account.created_at).toLocaleDateString('ja-JP')}
                   </td>
                   <td className="px-4 py-3 text-right">
