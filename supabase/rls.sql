@@ -143,3 +143,23 @@ create policy "cast can update own schedule"
       where cast_id = (select cast_id from profiles where id = auth.uid())
     )
   );
+
+-- =============================================
+-- Storage ポリシー（gallery-images バケット）
+-- =============================================
+
+create policy "public can read gallery images"
+  on storage.objects for select
+  using (bucket_id = 'gallery-images');
+
+create policy "authenticated can upload gallery images"
+  on storage.objects for insert to authenticated
+  with check (bucket_id = 'gallery-images');
+
+create policy "authenticated can update gallery images"
+  on storage.objects for update to authenticated
+  using (bucket_id = 'gallery-images');
+
+create policy "authenticated can delete gallery images"
+  on storage.objects for delete to authenticated
+  using (bucket_id = 'gallery-images');

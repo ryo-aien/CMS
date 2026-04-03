@@ -179,7 +179,7 @@ export default function AdminGalleryPage() {
                         onClick={() => togglePublic(item)}
                         className="flex-1 py-1 text-[11px] font-medium rounded bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors"
                       >
-                        {item.is_public ? '非公開に' : '公開に'}
+                        {item.is_public ? '非公開' : '公開'}
                       </button>
                       <button
                         type="button"
