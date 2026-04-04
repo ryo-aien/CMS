@@ -82,7 +82,16 @@ export default function AdminSchedulePage() {
     setModal({ open: true, date, schedule });
     setModalCastIds((schedule?.casts ?? []).map((c) => c.id));
     const s = schedule as (Schedule & { castTimes?: Record<string, { start: string; end: string }> }) | undefined;
-    setModalCastTimes(s?.castTimes ?? {});
+    const existingTimes = s?.castTimes ?? {};
+    // 全キャスト分の時間を初期化（既存データがあればそれを使い、なければデフォルト値）
+    const initialTimes: Record<string, { start: string; end: string }> = {};
+    for (const cast of allCasts) {
+      initialTimes[cast.id] = existingTimes[cast.id] ?? {
+        start: cast.default_work_start ?? '',
+        end: cast.default_work_end ?? '',
+      };
+    }
+    setModalCastTimes(initialTimes);
     setModalNote(schedule?.note ?? '');
     setModalPublic(schedule?.is_public ?? false);
   };
@@ -298,43 +307,37 @@ export default function AdminSchedulePage() {
                 <p className="text-xs font-medium text-gray-600 mb-2">出勤キャスト</p>
                 <div className="space-y-2 max-h-64 overflow-y-auto">
                   {allCasts.map((cast) => (
-                    <div key={cast.id}>
-                      <label className="flex items-center gap-2 cursor-pointer py-1">
-                        <input
-                          type="checkbox"
-                          checked={modalCastIds.includes(cast.id)}
-                          onChange={() => toggleModalCast(cast.id)}
-                          className="w-4 h-4 accent-pink-500"
-                        />
-                        <span className="text-sm text-gray-700">{cast.name}</span>
-                      </label>
-                      {modalCastIds.includes(cast.id) && (
-                        <div className="flex items-center gap-2 ml-6 mt-1">
-                          <input
-                            type="time"
-                            value={modalCastTimes[cast.id]?.start ?? ''}
-                            onChange={(e) =>
-                              setModalCastTimes((prev) => ({
-                                ...prev,
-                                [cast.id]: { ...prev[cast.id], start: e.target.value },
-                              }))
-                            }
-                            className="px-2 py-1 border border-gray-200 rounded-lg text-xs focus:outline-none focus:border-pink-400"
-                          />
-                          <span className="text-gray-400 text-xs">〜</span>
-                          <input
-                            type="time"
-                            value={modalCastTimes[cast.id]?.end ?? ''}
-                            onChange={(e) =>
-                              setModalCastTimes((prev) => ({
-                                ...prev,
-                                [cast.id]: { ...prev[cast.id], end: e.target.value },
-                              }))
-                            }
-                            className="px-2 py-1 border border-gray-200 rounded-lg text-xs focus:outline-none focus:border-pink-400"
-                          />
-                        </div>
-                      )}
+                    <div key={cast.id} className="flex items-center gap-2 py-1">
+                      <input
+                        type="checkbox"
+                        checked={modalCastIds.includes(cast.id)}
+                        onChange={() => toggleModalCast(cast.id)}
+                        className="w-4 h-4 accent-pink-500 shrink-0"
+                      />
+                      <span className="text-sm text-gray-700 w-20 shrink-0">{cast.name}</span>
+                      <input
+                        type="time"
+                        value={modalCastTimes[cast.id]?.start ?? ''}
+                        onChange={(e) =>
+                          setModalCastTimes((prev) => ({
+                            ...prev,
+                            [cast.id]: { ...prev[cast.id], start: e.target.value },
+                          }))
+                        }
+                        className="px-2 py-1 border border-gray-200 rounded-lg text-xs focus:outline-none focus:border-pink-400"
+                      />
+                      <span className="text-gray-400 text-xs">〜</span>
+                      <input
+                        type="time"
+                        value={modalCastTimes[cast.id]?.end ?? ''}
+                        onChange={(e) =>
+                          setModalCastTimes((prev) => ({
+                            ...prev,
+                            [cast.id]: { ...prev[cast.id], end: e.target.value },
+                          }))
+                        }
+                        className="px-2 py-1 border border-gray-200 rounded-lg text-xs focus:outline-none focus:border-pink-400"
+                      />
                     </div>
                   ))}
                 </div>
