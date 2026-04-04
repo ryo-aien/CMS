@@ -22,9 +22,6 @@ export default function CastCard({ cast }: Props) {
         />
       )}
 
-      {/* Gradient overlay */}
-      <div className="absolute inset-0 bg-card-gradient" />
-
 
       {/* Name */}
       <div className="absolute bottom-0 left-0 right-0 p-4">
