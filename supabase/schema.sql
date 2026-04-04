@@ -18,6 +18,8 @@ create table casts (
   tiktok_url text,
   status text,
   default_workdays int[] default '{}',
+  default_work_start text,
+  default_work_end text,
   is_public boolean default false,
   sort_order int default 0,
   created_at timestamptz default now(),

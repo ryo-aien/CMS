@@ -22,6 +22,8 @@ export type Cast = {
   tiktok_url: string | null;
   status: string | null;
   default_workdays: number[];
+  default_work_start: string | null;
+  default_work_end: string | null;
   is_public: boolean;
   sort_order: number;
   created_at: string;

@@ -27,6 +27,8 @@ export default function EditCastPage() {
     tiktok_url: '',
     status: '',
     default_workdays: [] as number[],
+    default_work_start: '',
+    default_work_end: '',
     sort_order: 0,
     is_public: false,
     main_image_url: '',
@@ -52,6 +54,8 @@ export default function EditCastPage() {
           tiktok_url: cast.tiktok_url ?? '',
           status: cast.status ?? '',
           default_workdays: cast.default_workdays ?? [],
+          default_work_start: cast.default_work_start ?? '',
+          default_work_end: cast.default_work_end ?? '',
           sort_order: cast.sort_order ?? 0,
           is_public: cast.is_public ?? false,
           main_image_url: cast.main_image_url ?? '',
@@ -105,6 +109,8 @@ export default function EditCastPage() {
         tiktok_url: form.tiktok_url || null,
         status: form.status || null,
         default_workdays: form.default_workdays,
+        default_work_start: form.default_work_start || null,
+        default_work_end: form.default_work_end || null,
         sort_order: form.sort_order,
         is_public: form.is_public,
         main_image_url: form.main_image_url || null,
@@ -264,6 +270,25 @@ export default function EditCastPage() {
                   {w}
                 </button>
               ))}
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-xs font-medium text-gray-600 mb-2">デフォルト勤務時間</label>
+            <div className="flex items-center gap-2">
+              <input
+                type="time"
+                value={form.default_work_start}
+                onChange={(e) => setForm((p) => ({ ...p, default_work_start: e.target.value }))}
+                className="px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-pink-400"
+              />
+              <span className="text-gray-400 text-sm">〜</span>
+              <input
+                type="time"
+                value={form.default_work_end}
+                onChange={(e) => setForm((p) => ({ ...p, default_work_end: e.target.value }))}
+                className="px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-pink-400"
+              />
             </div>
           </div>
 
