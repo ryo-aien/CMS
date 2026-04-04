@@ -24,6 +24,8 @@ export type Cast = {
   default_workdays: number[];
   default_work_start: string | null;
   default_work_end: string | null;
+  work_start?: string | null;
+  work_end?: string | null;
   is_public: boolean;
   sort_order: number;
   created_at: string;

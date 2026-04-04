@@ -107,6 +107,11 @@ export default async function SchedulePage() {
                         <p className="text-xs text-text-secondary group-hover:text-accent transition-colors truncate">
                           {cast.name}
                         </p>
+                        {(cast.work_start || cast.work_end) && (
+                          <p className="text-xs text-text-muted mt-0.5">
+                            {cast.work_start ?? ''}{cast.work_start && cast.work_end ? '〜' : ''}{cast.work_end ?? ''}
+                          </p>
+                        )}
                       </Link>
                     ))}
                   </div>

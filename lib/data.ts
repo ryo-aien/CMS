@@ -59,7 +59,7 @@ export async function getSchedules(limit = 14): Promise<Schedule[]> {
 
     const { data, error } = await supabase
       .from('schedules')
-      .select(`*, casts:schedule_casts(cast:casts(*))`)
+      .select(`*, casts:schedule_casts(cast:casts(*), work_start, work_end)`)
       .eq('is_public', true)
       .gte('date', dateStr)
       .order('date')
@@ -69,7 +69,9 @@ export async function getSchedules(limit = 14): Promise<Schedule[]> {
 
     return (data ?? []).map((s: Record<string, unknown>) => ({
       ...s,
-      casts: ((s.casts as Array<{ cast: Cast }>) ?? []).map((sc) => sc.cast).filter(Boolean),
+      casts: ((s.casts as Array<{ cast: Cast; work_start: string | null; work_end: string | null }>) ?? [])
+        .map((sc) => sc.cast ? { ...sc.cast, work_start: sc.work_start, work_end: sc.work_end } : null)
+        .filter(Boolean),
     })) as Schedule[];
   } catch {
     return [];
