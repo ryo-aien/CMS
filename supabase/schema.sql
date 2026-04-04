@@ -40,6 +40,8 @@ create table schedules (
 create table schedule_casts (
   schedule_id uuid references schedules(id) on delete cascade,
   cast_id uuid references casts(id) on delete cascade,
+  work_start text,
+  work_end text,
   primary key (schedule_id, cast_id)
 );
 

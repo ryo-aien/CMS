@@ -18,6 +18,7 @@ export default function EditSchedulePage() {
     note: '',
     is_public: false,
     selectedCastIds: [] as string[],
+    castTimes: {} as Record<string, { start: string; end: string }>,
   });
 
   useEffect(() => {
@@ -27,7 +28,7 @@ export default function EditSchedulePage() {
         const [scheduleRes, castsRes] = await Promise.all([
           supabase
             .from('schedules')
-            .select('*, casts:schedule_casts(cast:casts(*))')
+            .select('*, casts:schedule_casts(cast:casts(*), work_start, work_end)')
             .eq('id', id)
             .single(),
           supabase.from('casts').select('*').order('sort_order'),
@@ -35,14 +36,18 @@ export default function EditSchedulePage() {
 
         if (scheduleRes.error) throw scheduleRes.error;
 
-        const schedule = scheduleRes.data as Schedule & { casts: Array<{ cast: Cast }> };
-        const castIds = (schedule.casts ?? []).map((sc: { cast: Cast }) => sc.cast.id);
+        const schedule = scheduleRes.data as Schedule & { casts: Array<{ cast: Cast; work_start: string | null; work_end: string | null }> };
+        const castIds = (schedule.casts ?? []).map((sc) => sc.cast.id);
+        const castTimes = Object.fromEntries(
+          (schedule.casts ?? []).map((sc) => [sc.cast.id, { start: sc.work_start ?? '', end: sc.work_end ?? '' }])
+        );
 
         setForm({
           date: schedule.date ?? '',
           note: schedule.note ?? '',
           is_public: schedule.is_public ?? false,
           selectedCastIds: castIds,
+          castTimes,
         });
 
         setAllCasts((castsRes.data as Cast[]) ?? []);
@@ -56,12 +61,20 @@ export default function EditSchedulePage() {
   }, [id]);
 
   const toggleCast = (castId: string) => {
-    setForm((prev) => ({
-      ...prev,
-      selectedCastIds: prev.selectedCastIds.includes(castId)
-        ? prev.selectedCastIds.filter((c) => c !== castId)
-        : [...prev.selectedCastIds, castId],
-    }));
+    setForm((prev) => {
+      if (prev.selectedCastIds.includes(castId)) {
+        return { ...prev, selectedCastIds: prev.selectedCastIds.filter((c) => c !== castId) };
+      }
+      const cast = allCasts.find((c) => c.id === castId);
+      return {
+        ...prev,
+        selectedCastIds: [...prev.selectedCastIds, castId],
+        castTimes: {
+          ...prev.castTimes,
+          [castId]: { start: cast?.default_work_start ?? '', end: cast?.default_work_end ?? '' },
+        },
+      };
+    });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -87,7 +100,12 @@ export default function EditSchedulePage() {
       await supabase.from('schedule_casts').delete().eq('schedule_id', id);
       if (form.selectedCastIds.length > 0) {
         await supabase.from('schedule_casts').insert(
-          form.selectedCastIds.map((cast_id) => ({ schedule_id: id, cast_id }))
+          form.selectedCastIds.map((cast_id) => ({
+            schedule_id: id,
+            cast_id,
+            work_start: form.castTimes[cast_id]?.start || null,
+            work_end: form.castTimes[cast_id]?.end || null,
+          }))
         );
       }
 
@@ -133,17 +151,52 @@ export default function EditSchedulePage() {
 
           <div>
             <label className="block text-xs font-medium text-gray-600 mb-2">出勤キャスト</label>
-            <div className="space-y-1.5 max-h-48 overflow-y-auto border border-gray-100 rounded-lg p-3">
+            <div className="space-y-2 max-h-64 overflow-y-auto border border-gray-100 rounded-lg p-3">
               {allCasts.map((cast) => (
-                <label key={cast.id} className="flex items-center gap-2 cursor-pointer py-1">
-                  <input
-                    type="checkbox"
-                    checked={form.selectedCastIds.includes(cast.id)}
-                    onChange={() => toggleCast(cast.id)}
-                    className="w-4 h-4 accent-pink-500"
-                  />
-                  <span className="text-sm text-gray-700">{cast.name}</span>
-                </label>
+                <div key={cast.id}>
+                  <label className="flex items-center gap-2 cursor-pointer py-1">
+                    <input
+                      type="checkbox"
+                      checked={form.selectedCastIds.includes(cast.id)}
+                      onChange={() => toggleCast(cast.id)}
+                      className="w-4 h-4 accent-pink-500"
+                    />
+                    <span className="text-sm text-gray-700">{cast.name}</span>
+                  </label>
+                  {form.selectedCastIds.includes(cast.id) && (
+                    <div className="flex items-center gap-2 ml-6 mt-1">
+                      <input
+                        type="time"
+                        value={form.castTimes[cast.id]?.start ?? ''}
+                        onChange={(e) =>
+                          setForm((prev) => ({
+                            ...prev,
+                            castTimes: {
+                              ...prev.castTimes,
+                              [cast.id]: { ...prev.castTimes[cast.id], start: e.target.value },
+                            },
+                          }))
+                        }
+                        className="px-2 py-1 border border-gray-200 rounded-lg text-xs focus:outline-none focus:border-pink-400"
+                      />
+                      <span className="text-gray-400 text-xs">〜</span>
+                      <input
+                        type="time"
+                        value={form.castTimes[cast.id]?.end ?? ''}
+                        onChange={(e) =>
+                          setForm((prev) => ({
+                            ...prev,
+                            castTimes: {
+                              ...prev.castTimes,
+                              [cast.id]: { ...prev.castTimes[cast.id], end: e.target.value },
+                            },
+                          }))
+                        }
+                        className="px-2 py-1 border border-gray-200 rounded-lg text-xs focus:outline-none focus:border-pink-400"
+                      />
+                    </div>
+                  )}
+                </div>
               ))}
             </div>
           </div>

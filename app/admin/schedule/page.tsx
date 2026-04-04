@@ -20,6 +20,7 @@ export default function AdminSchedulePage() {
   const [loading, setLoading] = useState(true);
   const [modal, setModal] = useState<ModalState>({ open: false, date: '' });
   const [modalCastIds, setModalCastIds] = useState<string[]>([]);
+  const [modalCastTimes, setModalCastTimes] = useState<Record<string, { start: string; end: string }>>({});
   const [modalNote, setModalNote] = useState('');
   const [modalPublic, setModalPublic] = useState(false);
   const [savingModal, setSavingModal] = useState(false);
@@ -37,7 +38,7 @@ export default function AdminSchedulePage() {
       const [schedulesRes, castsRes] = await Promise.all([
         supabase
           .from('schedules')
-          .select('*, casts:schedule_casts(cast:casts(*))')
+          .select('*, casts:schedule_casts(cast:casts(*), work_start, work_end)')
           .gte('date', startOfMonth)
           .lte('date', endOfMonth)
           .order('date'),
@@ -46,8 +47,13 @@ export default function AdminSchedulePage() {
 
       const rawSchedules = (schedulesRes.data ?? []).map((s: Record<string, unknown>) => ({
         ...s,
-        casts: ((s.casts as Array<{ cast: Cast }>) ?? []).map((sc) => sc.cast).filter(Boolean),
-      })) as Schedule[];
+        casts: ((s.casts as Array<{ cast: Cast; work_start: string | null; work_end: string | null }>) ?? []).map((sc) => sc.cast).filter(Boolean),
+        castTimes: Object.fromEntries(
+          ((s.casts as Array<{ cast: Cast; work_start: string | null; work_end: string | null }>) ?? [])
+            .filter((sc) => sc.cast)
+            .map((sc) => [sc.cast.id, { start: sc.work_start ?? '', end: sc.work_end ?? '' }])
+        ),
+      })) as (Schedule & { castTimes: Record<string, { start: string; end: string }> })[];
 
       setSchedules(rawSchedules);
       setAllCasts((castsRes.data as Cast[]) ?? []);
@@ -75,6 +81,8 @@ export default function AdminSchedulePage() {
   const openModal = (date: string, schedule?: Schedule) => {
     setModal({ open: true, date, schedule });
     setModalCastIds((schedule?.casts ?? []).map((c) => c.id));
+    const s = schedule as (Schedule & { castTimes?: Record<string, { start: string; end: string }> }) | undefined;
+    setModalCastTimes(s?.castTimes ?? {});
     setModalNote(schedule?.note ?? '');
     setModalPublic(schedule?.is_public ?? false);
   };
@@ -82,9 +90,15 @@ export default function AdminSchedulePage() {
   const closeModal = () => setModal({ open: false, date: '' });
 
   const toggleModalCast = (id: string) => {
-    setModalCastIds((prev) =>
-      prev.includes(id) ? prev.filter((c) => c !== id) : [...prev, id]
-    );
+    setModalCastIds((prev) => {
+      if (prev.includes(id)) return prev.filter((c) => c !== id);
+      const cast = allCasts.find((c) => c.id === id);
+      setModalCastTimes((times) => ({
+        ...times,
+        [id]: { start: cast?.default_work_start ?? '', end: cast?.default_work_end ?? '' },
+      }));
+      return [...prev, id];
+    });
   };
 
   const saveModal = async () => {
@@ -114,7 +128,12 @@ export default function AdminSchedulePage() {
         await supabase.from('schedule_casts').delete().eq('schedule_id', scheduleId);
         if (modalCastIds.length > 0) {
           await supabase.from('schedule_casts').insert(
-            modalCastIds.map((cast_id) => ({ schedule_id: scheduleId, cast_id }))
+            modalCastIds.map((cast_id) => ({
+              schedule_id: scheduleId,
+              cast_id,
+              work_start: modalCastTimes[cast_id]?.start || null,
+              work_end: modalCastTimes[cast_id]?.end || null,
+            }))
           );
         }
       }
@@ -162,7 +181,12 @@ export default function AdminSchedulePage() {
         if (scheduleId && castsForDay.length > 0) {
           await supabase.from('schedule_casts').delete().eq('schedule_id', scheduleId);
           await supabase.from('schedule_casts').insert(
-            castsForDay.map((c) => ({ schedule_id: scheduleId, cast_id: c.id }))
+            castsForDay.map((c) => ({
+              schedule_id: scheduleId,
+              cast_id: c.id,
+              work_start: c.default_work_start ?? null,
+              work_end: c.default_work_end ?? null,
+            }))
           );
         }
       }
@@ -272,17 +296,46 @@ export default function AdminSchedulePage() {
               {/* Cast selection */}
               <div>
                 <p className="text-xs font-medium text-gray-600 mb-2">出勤キャスト</p>
-                <div className="space-y-1.5 max-h-48 overflow-y-auto">
+                <div className="space-y-2 max-h-64 overflow-y-auto">
                   {allCasts.map((cast) => (
-                    <label key={cast.id} className="flex items-center gap-2 cursor-pointer py-1">
-                      <input
-                        type="checkbox"
-                        checked={modalCastIds.includes(cast.id)}
-                        onChange={() => toggleModalCast(cast.id)}
-                        className="w-4 h-4 accent-pink-500"
-                      />
-                      <span className="text-sm text-gray-700">{cast.name}</span>
-                    </label>
+                    <div key={cast.id}>
+                      <label className="flex items-center gap-2 cursor-pointer py-1">
+                        <input
+                          type="checkbox"
+                          checked={modalCastIds.includes(cast.id)}
+                          onChange={() => toggleModalCast(cast.id)}
+                          className="w-4 h-4 accent-pink-500"
+                        />
+                        <span className="text-sm text-gray-700">{cast.name}</span>
+                      </label>
+                      {modalCastIds.includes(cast.id) && (
+                        <div className="flex items-center gap-2 ml-6 mt-1">
+                          <input
+                            type="time"
+                            value={modalCastTimes[cast.id]?.start ?? ''}
+                            onChange={(e) =>
+                              setModalCastTimes((prev) => ({
+                                ...prev,
+                                [cast.id]: { ...prev[cast.id], start: e.target.value },
+                              }))
+                            }
+                            className="px-2 py-1 border border-gray-200 rounded-lg text-xs focus:outline-none focus:border-pink-400"
+                          />
+                          <span className="text-gray-400 text-xs">〜</span>
+                          <input
+                            type="time"
+                            value={modalCastTimes[cast.id]?.end ?? ''}
+                            onChange={(e) =>
+                              setModalCastTimes((prev) => ({
+                                ...prev,
+                                [cast.id]: { ...prev[cast.id], end: e.target.value },
+                              }))
+                            }
+                            className="px-2 py-1 border border-gray-200 rounded-lg text-xs focus:outline-none focus:border-pink-400"
+                          />
+                        </div>
+                      )}
+                    </div>
                   ))}
                 </div>
               </div>

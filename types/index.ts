@@ -43,6 +43,8 @@ export type Schedule = {
 export type ScheduleCast = {
   schedule_id: string;
   cast_id: string;
+  work_start: string | null;
+  work_end: string | null;
 };
 
 export type News = {
