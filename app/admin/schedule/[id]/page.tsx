@@ -36,7 +36,9 @@ export default function EditSchedulePage() {
 
         if (scheduleRes.error) throw scheduleRes.error;
 
-        const schedule = scheduleRes.data as Schedule & { casts: Array<{ cast: Cast; work_start: string | null; work_end: string | null }> };
+        type RawScheduleCast = { cast: Cast; work_start: string | null; work_end: string | null };
+        type RawSchedule = Omit<Schedule, 'casts'> & { casts: RawScheduleCast[] };
+        const schedule = scheduleRes.data as unknown as RawSchedule;
         const castIds = (schedule.casts ?? []).map((sc) => sc.cast.id);
         const castTimes = Object.fromEntries(
           (schedule.casts ?? []).map((sc) => [sc.cast.id, { start: sc.work_start ?? '', end: sc.work_end ?? '' }])
