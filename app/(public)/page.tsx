@@ -29,10 +29,7 @@ export default async function HomePage() {
           <div className="absolute inset-0 bg-gradient-to-br from-surface via-background to-surface-2" />
         )}
 
-        {/* Overlay */}
-        <div className="absolute inset-0 bg-hero-gradient" />
-
-        {/* Pink glow */}
+{/* Pink glow */}
         <div className="absolute inset-0 bg-pink-glow pointer-events-none" />
       </section>
 
