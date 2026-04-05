@@ -83,45 +83,85 @@ export default async function HomePage() {
         </section>
       )}
 
-      {/* Shop Info */}
+      {/* Access */}
       {shop && (
-        <section className="py-16 sm:py-20 max-w-7xl mx-auto px-4 sm:px-6">
-          <div className="mb-10">
-            <p className="section-title">Shop Info</p>
-            <h2 className="section-heading">店舗情報</h2>
+        <section className="py-16 sm:py-20 max-w-3xl mx-auto px-4 sm:px-6">
+          <div className="mb-10 text-center">
+            <p className="section-title">Access</p>
+            <h2 className="section-heading">アクセス</h2>
+            <div className="mt-4 mx-auto w-12 h-0.5 bg-accent" />
           </div>
 
-          <div className="grid sm:grid-cols-2 gap-6 max-w-2xl">
+          <div className="space-y-4 mb-10">
             {shop.address && (
               <div className="card p-6">
-                <p className="text-xs tracking-widest text-accent mb-2">ADDRESS</p>
-                <p className="text-text-secondary text-sm leading-relaxed">{shop.address}</p>
+                <div className="flex items-start gap-4">
+                  <div className="flex-shrink-0 w-10 h-10 rounded-full bg-accent/10 flex items-center justify-center">
+                    <svg className="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <p className="text-xs tracking-widest text-accent mb-1">ADDRESS</p>
+                    <p className="text-text-secondary text-sm leading-relaxed">{shop.address}</p>
+                  </div>
+                </div>
               </div>
             )}
+
             {shop.business_hours && (
               <div className="card p-6">
-                <p className="text-xs tracking-widest text-accent mb-2">HOURS</p>
-                <p className="text-text-secondary text-sm leading-relaxed">{shop.business_hours}</p>
-                {shop.closed_days && (
-                  <p className="mt-2 text-xs text-text-muted">定休日: {shop.closed_days}</p>
-                )}
+                <div className="flex items-start gap-4">
+                  <div className="flex-shrink-0 w-10 h-10 rounded-full bg-accent/10 flex items-center justify-center">
+                    <svg className="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <p className="text-xs tracking-widest text-accent mb-1">HOURS</p>
+                    <p className="text-text-secondary text-sm leading-relaxed">{shop.business_hours}</p>
+                    {shop.closed_days && (
+                      <p className="mt-1.5 text-xs text-text-muted">定休日: {shop.closed_days}</p>
+                    )}
+                  </div>
+                </div>
               </div>
             )}
           </div>
 
-          <div className="mt-10 flex flex-wrap gap-3">
-            <Link href="/access" className="btn-outline">
-              アクセスを見る
-            </Link>
-            {shop.line_url && (
+          {shop.access_text && (
+            <div className="mb-10 richtext">
+              <div dangerouslySetInnerHTML={{ __html: shop.access_text }} />
+            </div>
+          )}
+
+          {shop.google_map_embed_url && (
+            <div className="rounded-xl overflow-hidden aspect-video bg-surface-2 mb-10">
+              <iframe
+                src={shop.google_map_embed_url}
+                width="100%"
+                height="100%"
+                style={{ border: 0 }}
+                allowFullScreen
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+                title="Google Map"
+                className="w-full h-full"
+              />
+            </div>
+          )}
+
+          {shop.line_url && (
+            <div className="flex justify-center">
               <a href={shop.line_url} target="_blank" rel="noopener noreferrer" className="btn-line">
                 <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M19.365 9.89c.50 0 .907.41.907.91s-.407.91-.907.91H17.58v1.16h1.787c.5 0 .907.41.907.91s-.407.91-.907.91h-2.696a.91.91 0 01-.907-.91V8.98c0-.5.407-.91.907-.91h2.696c.5 0 .907.41.907.91s-.407.91-.907.91H17.58v1h1.785zm-5.457 3.807a.91.91 0 01-.571-.202l-2.4-1.868v1.16a.91.91 0 01-.907.91.91.91 0 01-.907-.91V8.98a.91.91 0 01.907-.91.91.91 0 01.571.202l2.4 1.868V8.98a.91.91 0 01.907-.91.91.91 0 01.907.91v3.807a.91.91 0 01-.907.91zM8.58 12.787a.91.91 0 01-.907.91.91.91 0 01-.907-.91V8.98a.91.91 0 01.907-.91.91.91 0 01.907.91v3.807zM6.118 12.787a.91.91 0 01-.907.91H2.515a.91.91 0 01-.907-.91V8.98a.91.91 0 01.907-.91.91.91 0 01.907.91v2.897H5.21a.91.91 0 01.908.91zM22 10.3C22 5.924 17.075 2.4 11 2.4S0 5.924 0 10.3c0 3.944 3.497 7.253 8.222 7.881.32.069.756.21.866.483.099.247.065.635.032.885l-.14.84c-.043.247-.197.968.848.528 1.045-.44 5.636-3.317 7.688-5.679C19.33 13.56 22 12.106 22 10.3z"/>
                 </svg>
                 LINEで問い合わせ
               </a>
-            )}
-          </div>
+            </div>
+          )}
         </section>
       )}
 

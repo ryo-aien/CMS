@@ -10,7 +10,6 @@ const navLinks = [
   { href: '/system', label: 'SYSTEM' },
   { href: '/news', label: 'NEWS' },
   { href: '/gallery', label: 'GALLERY' },
-  { href: '/access', label: 'ACCESS' },
   { href: '/recruit', label: 'RECRUIT' },
 ];
 
