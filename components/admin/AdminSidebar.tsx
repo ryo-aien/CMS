@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { createClient } from '@/lib/supabase';
@@ -117,7 +118,14 @@ export default function AdminSidebar({ onClose }: Props) {
       {/* Logo */}
       <div className="px-6 py-5 border-b border-gray-100">
         <Link href="/admin" onClick={onClose} className="flex items-center gap-2">
-          <span className="text-lg font-bold" style={{ color: '#e91e8c' }}>CONCAFE</span>
+          <Image
+            src="https://xekcytahekbmohmkvojz.supabase.co/storage/v1/object/public/gallery-images/Revo.png"
+            alt="CONCAFE"
+            width={100}
+            height={32}
+            className="h-8 w-auto object-contain"
+            unoptimized
+          />
           <span className="text-xs text-gray-500 font-medium">管理画面</span>
         </Link>
       </div>

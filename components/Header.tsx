@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { useState } from 'react';
 
 const navLinks = [
@@ -22,9 +23,14 @@ export default function Header() {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 group">
-            <span className="text-xl font-display font-bold text-accent group-hover:text-accent-light transition-colors">
-              ✦ CONCAFE
-            </span>
+            <Image
+              src="https://xekcytahekbmohmkvojz.supabase.co/storage/v1/object/public/gallery-images/Revo.png"
+              alt="CONCAFE"
+              width={120}
+              height={40}
+              className="h-10 w-auto object-contain"
+              unoptimized
+            />
           </Link>
 
           {/* Desktop Nav */}
