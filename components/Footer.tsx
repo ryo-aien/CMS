@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 
 const navLinks = [
   { href: '/cast', label: 'CAST' },
@@ -17,8 +18,15 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-12">
         <div className="flex flex-col items-center gap-8">
           {/* Logo */}
-          <Link href="/" className="text-2xl font-display font-bold text-accent">
-            ✦ CONCAFE
+          <Link href="/">
+            <Image
+              src="https://xekcytahekbmohmkvojz.supabase.co/storage/v1/object/public/gallery-images/Revo.png"
+              alt="Revo"
+              width={100}
+              height={34}
+              className="h-8 w-auto object-contain"
+              unoptimized
+            />
           </Link>
 
           {/* Nav */}
